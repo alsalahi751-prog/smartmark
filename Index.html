@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title id="title">SmartMark - احفظ كل شيء بذكاء</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="احفظ ونظّم كل ما يهمك من الإنترنت: روابط، مقالات، فيديوهات، صور وملفات — في مكان واحد ذكي وآمن." id="desc">
+  <meta name="theme-color" content="#4CAF50">
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --secondary: #2196F3;
+      --dark: #212121;
+      --light: #f5f5f5;
+      --gray: #9E9E9E;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fafafa;
+      color: var(--dark);
+    }
+
+    header {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    nav {
+      background: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-around;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--dark);
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    nav a.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    section {
+      display: none;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 10px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    .folder-card {
+      background: #e8f5e9;
+      border-left: 4px solid var(--primary);
+    }
+
+    .content-card {
+      background: #e3f2fd;
+      border-left: 4px solid var(--secondary);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: var(--dark);
+      color: white;
+      margin-top: 40px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .search-bar {
+      margin-bottom: 20px;
+    }
+
+    .app-logo {
+      height: 60px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .lang-toggle {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <button class="lang-toggle" onclick="toggleLanguage()">
+    <span id="lang-text">EN</span>
+  </button>
+
+  <header>
+    <img src="https://via.placeholder.com/80/4CAF50/ffffff?text=SM " alt="SmartMark Logo" class="app-logo">
+    <h1 id="app-title">SmartMark</h1>
+    <p id="app-slogan">احفظ كل شيء بذكاء</p>
+  </header>
+
+  <nav>
+    <a href="#" data-tab="home" class="active" id="nav-home">الرئيسية</a>
+    <a href="#" data-tab="add" id="nav-add">إضافة محتوى</a>
+    <a href="#" data-tab="folders" id="nav-folders">المجلدات</a>
+    <a href="#" data-tab="search" id="nav-search">بحث</a>
+    <a href="#" data-tab="settings" id="nav-settings">الإعدادات</a>
+  </nav>
+
+  <main>
+    <!-- شاشة الرئيسية -->
+    <section id="home" class="active">
+      <h2 id="home-title">مرحبًا بك في SmartMark</h2>
+      <p id="home-desc">احفظ ونظّم كل ما يهمك من الإنترنت في مكان واحد ذكي وآمن.</p>
+
+      <div class="grid">
+        <div class="card folder-card">
+          <h3 id="folders-title">المجلدات</h3>
+          <p id="folders-desc">احفظ المحتوى في مجلدات ذكية</p>
+          <button onclick="switchTab('folders')" id="view-folders-btn">عرض المجلدات</button>
+        </div>
+        <div class="card content-card">
+          <h3 id="saved-title">المحفوظات</h3>
+          <p id="saved-desc">جميع المحتوى المحفوظ في مكان واحد</p>
+          <button onclick="switchTab('search')" id="view-all-btn">عرض الكل</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- شاشة إضافة محتوى -->
+    <section id="add">
+      <h2 id="add-title">إضافة محتوى جديد</h2>
+      <form id="add-form">
+        <div class="form-group">
+          <label id="type-label">النوع</label>
+          <select id="content-type" required>
+            <option value="link" id="type-link">رابط</option>
+            <option value="article" id="type-article">مقال</option>
+            <option value="video" id="type-video">فيديو</option>
+            <option value="image" id="type-image">صورة</option>
+            <option value="pdf" id="type-pdf">PDF</option>
+            <option value="file" id="type-file">ملف آخر</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="title-label">العنوان</label>
+          <input type="text" id="content-title" placeholder="" required>
+        </div>
+        <div class="form-group">
+          <label id="url-label">الرابط أو المحتوى</label>
+          <textarea id="content-url" placeholder="" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label id="tags-label">العلامات (مفصولة بفواصل)</label>
+          <input type="text" id="content-tags" placeholder="">
+        </div>
+        <div class="form-group">
+          <label id="folder-label">المجلد</label>
+          <select id="content-folder" required>
+            <option value="default" id="default-folder">المجلد العام</option>
+          </select>
+        </div>
+        <button type="submit" id="save-btn">حفظ المحتوى</button>
+      </form>
+    </section>
+
+    <!-- شاشة المجلدات -->
+    <section id="folders">
+      <h2 id="folders-page-title">المجلدات</h2>
+      <button onclick="showFolderModal()" id="add-folder-btn">إضافة مجلد جديد</button>
+
+      <div id="folders-list" class="grid">
+        <!-- مجلدات تُعرض هنا -->
+      </div>
+
+      <div id="folder-modal" class="hidden">
+        <div class="card">
+          <h3 id="new-folder-title">إضافة مجلد جديد</h3>
+          <input type="text" id="new-folder-name" placeholder="">
+          <button onclick="createFolder()" id="create-folder-btn">إنشاء</button>
+          <button onclick="hideFolderModal()" id="cancel-btn">إلغاء</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- شاشة البحث -->
+    <section id="search">
+      <h2 id="search-title">البحث في المحفوظات</h2>
+      <input type="text" class="search-bar" id="search-input" placeholder="ابحث في العناوين أو العلامات...">
+
+      <div id="search-results" class="grid">
+        <!-- نتائج البحث تُعرض هنا -->
+      </div>
+    </section>
+
+    <!-- شاشة الإعدادات -->
+    <section id="settings">
+      <h2 id="settings-title">الإعدادات</h2>
+      <div class="card">
+        <h3 id="account-title">الحساب</h3>
+        <p id="account-desc">تسجيل الدخول للمزامنة السحابية</p>
+        <button onclick="login()" id="login-btn">تسجيل الدخول</button>
+      </div>
+      <div class="card">
+        <h3 id="backup-title">النسخ الاحتياطي</h3>
+        <p id="backup-desc">تصدير المحفوظات إلى ملف JSON</p>
+        <button onclick="exportData()" id="export-btn">تصدير البيانات</button>
+      </div>
+      <div class="card">
+        <h3 id="privacy-title">سياسة الخصوصية</h3>
+        <button onclick="showPrivacyPolicy()" id="privacy-btn">عرض سياسة الخصوصية</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p id="footer-text">SmartMark &copy; 2025 | احفظ كل شيء بذكاء</p>
+  </footer>
+
+  <script>
+    // --- ترجمات اللغتين ---
+    const translations = {
+      ar: {
+        title: "SmartMark - احفظ كل شيء بذكاء",
+        slogan: "احفظ كل شيء بذكاء",
+        nav: {
+          home: "الرئيسية",
+          add: "إضافة محتوى",
+          folders: "المجلدات",
+          search: "بحث",
+          settings: "الإعدادات"
+        },
+        home: {
+          title: "مرحبًا بك في SmartMark",
+          desc: "احفظ ونظّم كل ما يهمك من الإنترنت في مكان واحد ذكي وآمن.",
+          folders: {
+            title: "المجلدات",
+            desc: "احفظ المحتوى في مجلدات ذكية",
+            btn: "عرض المجلدات"
+          },
+          saved: {
+            title: "المحفوظات",
+            desc: "جميع المحتوى المحفوظ في مكان واحد",
+            btn: "عرض الكل"
+          }
+        },
+        add: {
+          title: "إضافة محتوى جديد",
+          type: "النوع",
+          title_label: "العنوان",
+          url_label: "الرابط أو المحتوى",
+          tags_label: "العلامات (مفصولة بفواصل)",
+          folder_label: "المجلد",
+          default_folder: "المجلد العام",
+          save_btn: "حفظ المحتوى",
+          type_link: "رابط",
+          type_article: "مقال",
+          type_video: "فيديو",
+          type_image: "صورة",
+          type_pdf: "PDF",
+          type_file: "ملف آخر"
+        },
+        folders: {
+          title: "المجلدات",
+          add_btn: "إضافة مجلد جديد",
+          new_folder_title: "إضافة مجلد جديد",
+          create_btn: "إنشاء",
+          cancel_btn: "إلغاء",
+          items: "عناصر",
+          view_content: "عرض المحتوى"
+        },
+        search: {
+          title: "البحث في المحفوظات",
+          placeholder: "ابحث في العناوين أو العلامات...",
+          type: "النوع",
+          tags: "العلامات",
+          folder: "المجلد",
+          view_content: "عرض المحتوى"
+        },
+        settings: {
+          account: {
+            title: "الحساب",
+            desc: "تسجيل الدخول للمزامنة السحابية",
+            btn: "تسجيل الدخول"
+          },
+          backup: {
+            title: "النسخ الاحتياطي",
+            desc: "تصدير المحفوظات إلى ملف JSON",
+            btn: "تصدير البيانات"
+          },
+          privacy: {
+            title: "سياسة الخصوصية",
+            btn: "عرض سياسة الخصوصية"
+          }
+        },
+        footer: "SmartMark &copy; 2025 | احفظ كل شيء بذكاء",
+        notifications: {
+          content_saved: "تم حفظ المحتوى بنجاح!",
+          login_system_development: "نظام تسجيل الدخول قيد التطوير",
+          data_exported: "تم تصدير البيانات بنجاح!"
+        },
+        privacy: {
+          title: "سياسة الخصوصية",
+          description: "نحن في تطبيق <strong>SmartMark</strong> نحترم خصوصية المستخدمين ونلتزم بحماية بياناتهم وفقًا لأفضل الممارسات.",
+          info_collected: "المعلومات التي نقوم بجمعها",
+          info_collected_items: {
+            content: "المحتوى الذي يقوم المستخدم بحفظه داخل التطبيق (روابط، ملفات، وسائط).",
+            tech_data: "بيانات تقنية غير شخصية مثل نوع الجهاز ونظام التشغيل لأغراض تحسين الأداء."
+          },
+          info_usage: "كيفية استخدام المعلومات",
+          info_usage_items: {
+            run_app: "تشغيل التطبيق وتقديم وظائفه الأساسية.",
+            improve_experience: "تحسين تجربة المستخدم وتطوير الميزات.",
+            ensure_security: "ضمان أمان واستقرار الخدمة."
+          },
+          data_protection: "حماية البيانات",
+          data_protection_description: "نطبّق إجراءات تقنية وتنظيمية مناسبة لحماية بيانات المستخدم من الوصول غير المصرح به أو الفقدان.",
+          data_sharing: "مشاركة البيانات",
+          data_sharing_description: "لا نقوم ببيع أو تأجير أو مشاركة بيانات المستخدم مع أي طرف ثالث.",
+          policy_changes: "التغييرات على سياسة الخصوصية",
+          policy_changes_description: "قد يتم تحديث هذه السياسة من وقت لآخر وسيتم نشر أي تعديل على هذه الصفحة.",
+          contact_us: "التواصل معنا",
+          contact_us_description: "يمكن التواصل معنا من داخل التطبيق في حال وجود أي استفسار."
+        }
+      },
+      en: {
+        title: "SmartMark - Save Everything Smartly",
+        slogan: "Save Everything Smartly",
+        nav: {
+          home: "Home",
+          add: "Add Content",
+          folders: "Folders",
+          search: "Search",
+          settings: "Settings"
+        },
+        home: {
+          title: "Welcome to SmartMark",
+          desc: "Save and organize everything you care about from the internet in one smart and secure place.",
+          folders: {
+            title: "Folders",
+            desc: "Save content in smart folders",
+            btn: "View Folders"
+          },
+          saved: {
+            title: "Saved Items",
+            desc: "All your saved content in one place",
+            btn: "View All"
+          }
+        },
+        add: {
+          title: "Add New Content",
+          type: "Type",
+          title_label: "Title",
+          url_label: "URL or Content",
+          tags_label: "Tags (comma-separated)",
+          folder_label: "Folder",
+          default_folder: "Default Folder",
+          save_btn: "Save Content",
+          type_link: "Link",
+          type_article: "Article",
+          type_video: "Video",
+          type_image: "Image",
+          type_pdf: "PDF",
+          type_file: "Other File"
+        },
+        folders: {
+          title: "Folders",
+          add_btn: "Add New Folder",
+          new_folder_title: "Add New Folder",
+          create_btn: "Create",
+          cancel_btn: "Cancel",
+          items: "items",
+          view_content: "View Content"
+        },
+        search: {
+          title: "Search Saved Items",
+          placeholder: "Search titles or tags...",
+          type: "Type",
+          tags: "Tags",
+          folder: "Folder",
+          view_content: "View Content"
+        },
+        settings: {
+          account: {
+            title: "Account",
+            desc: "Sign in for cloud sync",
+            btn: "Sign In"
+          },
+          backup: {
+            title: "Backup",
+            desc: "Export saved items to JSON file",
+            btn: "Export Data"
+          },
+          privacy: {
+            title: "Privacy Policy",
+            btn: "View Privacy Policy"
+          }
+        },
+        footer: "SmartMark &copy; 2025 | Save Everything Smartly",
+        notifications: {
+          content_saved: "Content saved successfully!",
+          login_system_development: "Login system is under development",
+          data_exported: "Data exported successfully!"
+        },
+        privacy: {
+          title: "Privacy Policy",
+          description: "In the <strong>SmartMark</strong> app, we respect users\' privacy and are committed to protecting their data according to best practices.",
+          info_collected: "Information We Collect",
+          info_collected_items: {
+            content: "Content saved by the user within the app (links, files, media).",
+            tech_data: "Non-personal technical data such as device type and operating system for performance improvement purposes."
+          },
+          info_usage: "How We Use Information",
+          info_usage_items: {
+            run_app: "Running the app and providing its core functions.",
+            improve_experience: "Improving user experience and developing features.",
+            ensure_security: "Ensuring security and stability of the service."
+          },
+          data_protection: "Data Protection",
+          data_protection_description: "We apply appropriate technical and organizational procedures to protect user data from unauthorized access or loss.",
+          data_sharing: "Data Sharing",
+          data_sharing_description: "We do not sell, rent, or share user data with any third party.",
+          policy_changes: "Changes to Privacy Policy",
+          policy_changes_description: "This policy may be updated from time to time and any changes will be published on this page.",
+          contact_us: "Contact Us",
+          contact_us_description: "You can contact us from within the app in case of any inquiry."
+        }
+      }
+    };
+
+    let currentLang = localStorage.getItem('smartmark-lang') || 'ar';
+
+    function updateLanguage() {
+      const t = translations[currentLang];
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+      // تحديث العناصر
+      document.getElementById('title').textContent = t.title;
+      document.getElementById('app-slogan').textContent = t.slogan;
+      document.getElementById('nav-home').textContent = t.nav.home;
+      document.getElementById('nav-add').textContent = t.nav.add;
+      document.getElementById('nav-folders').textContent = t.nav.folders;
+      document.getElementById('nav-search').textContent = t.nav.search;
+      document.getElementById('nav-settings').textContent = t.nav.settings;
+
+      document.getElementById('home-title').textContent = t.home.title;
+      document.getElementById('home-desc').textContent = t.home.desc;
+      document.getElementById('folders-title').textContent = t.home.folders.title;
+      document.getElementById('folders-desc').textContent = t.home.folders.desc;
+      document.getElementById('view-folders-btn').textContent = t.home.folders.btn;
+      document.getElementById('saved-title').textContent = t.home.saved.title;
+      document.getElementById('saved-desc').textContent = t.home.saved.desc;
+      document.getElementById('view-all-btn').textContent = t.home.saved.btn;
+
+      document.getElementById('add-title').textContent = t.add.title;
+      document.getElementById('type-label').textContent = t.add.type;
+      document.getElementById('title-label').textContent = t.add.title_label;
+      document.getElementById('url-label').textContent = t.add.url_label;
+      document.getElementById('tags-label').textContent = t.add.tags_label;
+      document.getElementById('folder-label').textContent = t.add.folder_label;
+      document.getElementById('default-folder').textContent = t.add.default_folder;
+      document.getElementById('save-btn').textContent = t.add.save_btn;
+
+      document.getElementById('folders-page-title').textContent = t.folders.title;
+      document.getElementById('add-folder-btn').textContent = t.folders.add_btn;
+      document.getElementById('new-folder-title').textContent = t.folders.new_folder_title;
+      document.getElementById('create-folder-btn').textContent = t.folders.create_btn;
+      document.getElementById('cancel-btn').textContent = t.folders.cancel_btn;
+
+      document.getElementById('search-title').textContent = t.search.title;
+      document.getElementById('search-input').placeholder = t.search.placeholder;
+
+      document.getElementById('account-title').textContent = t.settings.account.title;
+      document.getElementById('account-desc').textContent = t.settings.account.desc;
+      document.getElementById('login-btn').textContent = t.settings.account.btn;
+      document.getElementById('backup-title').textContent = t.settings.backup.title;
+      document.getElementById('backup-desc').textContent = t.settings.backup.desc;
+      document.getElementById('export-btn').textContent = t.settings.backup.btn;
+      document.getElementById('privacy-title').textContent = t.settings.privacy.title;
+      document.getElementById('privacy-btn').textContent = t.settings.privacy.btn;
+
+      document.getElementById('footer-text').textContent = t.footer;
+
+      // تحديث placeholders
+      document.getElementById('content-title').placeholder = t.add.title_label;
+      document.getElementById('content-url').placeholder = t.add.url_label;
+      document.getElementById('content-tags').placeholder = t.add.tags_label;
+      document.getElementById('new-folder-name').placeholder = t.folders.new_folder_title;
+
+      // تحديث خيارات نوع المحتوى
+      document.getElementById('type-link').textContent = t.add.type_link;
+      document.getElementById('type-article').textContent = t.add.type_article;
+      document.getElementById('type-video').textContent = t.add.type_video;
+      document.getElementById('type-image').textContent = t.add.type_image;
+      document.getElementById('type-pdf').textContent = t.add.type_pdf;
+      document.getElementById('type-file').textContent = t.add.type_file;
+
+      // تحديث نص الزر
+      document.getElementById('lang-text').textContent = currentLang === 'ar' ? 'EN' : 'AR';
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      localStorage.setItem('smartmark-lang', currentLang);
+      updateLanguage();
+      // تحديث المجلدات
+      renderFolders();
+      // تحديث نتائج البحث
+      searchContents();
+    }
+
+    // --- بيانات التطبيق ---
+    let folders = JSON.parse(localStorage.getItem('smartmark-folders')) || [{ id: 'default', name: 'Default Folder', createdAt: new Date().toISOString() }];
+    let contents = JSON.parse(localStorage.getItem('smartmark-contents')) || [];
+
+    // --- تهيئة التطبيق ---
+    document.addEventListener('DOMContentLoaded', () => {
+      updateLanguage();
+      renderFolders();
+      setupEventListeners();
+    });
+
+    // --- التبديل بين الشاشات ---
+    function switchTab(tabName) {
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+
+      document.getElementById(tabName).classList.add('active');
+      document.querySelector(`nav a[data-tab="${tabName}"]`).classList.add('active');
+
+      // تحديث الترجمة عند تبديل الشاشة
+      updateLanguage();
+    }
+
+    // --- إعداد الأحداث ---
+    function setupEventListeners() {
+      document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          switchTab(e.target.getAttribute('data-tab'));
+        });
+      });
+
+      document.getElementById('add-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        addContent();
+      });
+
+      document.getElementById('search-input').addEventListener('input', searchContents);
+
+      // إضافة المجلدات إلى القائمة المنسدلة
+      const folderSelect = document.getElementById('content-folder');
+      folderSelect.innerHTML = '';
+      folders.forEach(folder => {
+        const option = document.createElement('option');
+        option.value = folder.id;
+        option.textContent = folder.name;
+        folderSelect.appendChild(option);
+      });
+    }
+
+    // --- وظائف المجلدات ---
+    function renderFolders() {
+      const container = document.getElementById('folders-list');
+      container.innerHTML = '';
+      folders.forEach(folder => {
+        const card = document.createElement('div');
+        card.className = 'card folder-card';
+        card.innerHTML = `
+          <h3>${folder.name}</h3>
+          <p>${new Date(folder.createdAt).toLocaleDateString()}</p>
+          <p>${contents.filter(c => c.folderId === folder.id).length} ${translations[currentLang].folders.items}</p>
+          <button onclick="viewFolder('${folder.id}')">${translations[currentLang].folders.view_content}</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function showFolderModal() {
+      document.getElementById('folder-modal').classList.remove('hidden');
+    }
+
+    function hideFolderModal() {
+      document.getElementById('folder-modal').classList.add('hidden');
+    }
+
+    function createFolder() {
+      const name = document.getElementById('new-folder-name').value.trim();
+      if (name) {
+        const newFolder = { id: Date.now().toString(), name, createdAt: new Date().toISOString() };
+        folders.push(newFolder);
+        localStorage.setItem('smartmark-folders', JSON.stringify(folders));
+
+        // تحديث القائمة المنسدلة
+        const folderSelect = document.getElementById('content-folder');
+        const option = document.createElement('option');
+        option.value = newFolder.id;
+        option.textContent = newFolder.name;
+        folderSelect.appendChild(option);
+
+        renderFolders();
+        document.getElementById('new-folder-name').value = '';
+        hideFolderModal();
+      }
+    }
+
+    // --- وظائف المحتوى ---
+    function addContent() {
+      const type = document.getElementById('content-type').value;
+      const title = document.getElementById('content-title').value;
+      const url = document.getElementById('content-url').value;
+      const tags = document.getElementById('content-tags').value.split(',').map(t => t.trim()).filter(t => t);
+      const folderId = document.getElementById('content-folder').value;
+
+      const newContent = {
+        id: Date.now(),
+        type,
+        title,
+        url,
+        tags,
+        folderId,
+        createdAt: new Date().toISOString()
+      };
+
+      contents.push(newContent);
+      localStorage.setItem('smartmark-contents', JSON.stringify(contents));
+
+      alert(translations[currentLang].notifications.content_saved);
+      document.getElementById('add-form').reset();
+    }
+
+    function viewFolder(folderId) {
+      const folder = folders.find(f => f.id === folderId);
+      if (folder) {
+        alert(`${translations[currentLang].folders.view_content}: ${folder.name}`);
+      }
+    }
+
+    function searchContents() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const resultsContainer = document.getElementById('search-results');
+      resultsContainer.innerHTML = '';
+
+      const filtered = contents.filter(item =>
+        item.title.toLowerCase().includes(query) ||
+        item.tags.some(tag => tag.toLowerCase().includes(query))
+      );
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card content-card';
+        card.innerHTML = `
+          <h3>${item.title}</h3>
+          <p><strong>${translations[currentLang].search.type}:</strong> ${item.type}</p>
+          <p><strong>${translations[currentLang].search.tags}:</strong> ${item.tags.join(', ')}</p>
+          <p><strong>${translations[currentLang].search.folder}:</strong> ${folders.find(f => f.id === item.folderId)?.name || 'N/A'}</p>
+          <a href="${item.url}" target="_blank">${translations[currentLang].search.view_content}</a>
+        `;
+        resultsContainer.appendChild(card);
+      });
+    }
+
+    // --- وظائف الإعدادات ---
+    function login() {
+      alert(translations[currentLang].notifications.login_system_development);
+    }
+
+    function exportData() {
+      const dataStr = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ folders, contents }));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "smartmark-backup.json");
+      document.body.appendChild(downloadAnchorNode);
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+
+      alert(translations[currentLang].notifications.data_exported);
+    }
+
+    function showPrivacyPolicy() {
+      const policyWindow = window.open('', '_blank');
+      policyWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="${currentLang}">
+        <head>
+          <meta charset="UTF-8">
+          <title>${translations[currentLang].privacy.title} - SmartMark</title>
+        </head>
+        <body>
+          <h1>${translations[currentLang].privacy.title}</h1>
+          <p>${translations[currentLang].privacy.description}</p>
+          <h2>${translations[currentLang].privacy.info_collected}</h2>
+          <ul>
+            <li>${translations[currentLang].privacy.info_collected_items.content}</li>
+            <li>${translations[currentLang].privacy.info_collected_items.tech_data}</li>
+          </ul>
+          <h2>${translations[currentLang].privacy.info_usage}</h2>
+          <ul>
+            <li>${translations[currentLang].privacy.info_usage_items.run_app}</li>
+            <li>${translations[currentLang].privacy.info_usage_items.improve_experience}</li>
+            <li>${translations[currentLang].privacy.info_usage_items.ensure_security}</li>
+          </ul>
+          <h2>${translations[currentLang].privacy.data_protection}</h2>
+          <p>${translations[currentLang].privacy.data_protection_description}</p>
+          <h2>${translations[currentLang].privacy.data_sharing}</h2>
+          <p>${translations[currentLang].privacy.data_sharing_description}</p>
+          <h2>${translations[currentLang].privacy.policy_changes}</h2>
+          <p>${translations[currentLang].privacy.policy_changes_description}</p>
+          <h2>${translations[currentLang].privacy.contact_us}</h2>
+          <p>${translations[currentLang].privacy.contact_us_description}</p>
+        </body>
+        </html>
+      `);
+    }
+
+    // --- دعم PWA ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(() => {
+          console.log('SW registered.');
+        }).catch(err => console.error('SW failed:', err));
+      });
+    }
+  </script>
+
+  <!-- Service Worker Code -->
+  <script>
+    const swCode = `
+      const CACHE_NAME = 'smartmark-v1';
+      const urlsToCache = ['/', '/index.html'];
+
+      self.addEventListener('install', (event) => {
+        event.waitUntil(
+          caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+        );
+      });
+
+      self.addEventListener('fetch', (event) => {
+        event.respondWith(
+          caches.match(event.request).then((response) => response || fetch(event.request))
+        );
+      });
+    `;
+
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    navigator.serviceWorker && navigator.serviceWorker.register(URL.createObjectURL(blob), { scope: './' });
+  </script>
+
+  <!-- Manifest Code -->
+  <script>
+    const manifest = {
+      name: "SmartMark - Save Everything Smartly",
+      short_name: "SmartMark",
+      start_url: "/",
+      display: "standalone",
+      background_color: "#ffffff",
+      theme_color: "#4CAF50",
+      icons: [
+        {
+          src: "https://via.placeholder.com/192/4CAF50/ffffff?text=SM ",
+          sizes: "192x192",
+          type: "image/png"
+        },
+        {
+          src: "https://via.placeholder.com/512/4CAF50/ffffff?text=SM ",
+          sizes: "512x512",
+          type: "image/png"
+        }
+      ]
+    };
+
+    const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const manifestUrl = URL.createObjectURL(manifestBlob);
+    document.querySelector('link[rel="manifest"]').href = manifestUrl;
+  </script>
+</body>
+</html>
