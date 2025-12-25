@@ -174,19 +174,6 @@
     <section id="home" class="active">
       <h2 id="home-title">مرحبا بك في SmartMark</h2>
       <p id="home-desc">احفظ ونظّم كل ما يهمك من الإنترنت في مكان واحد ذكي وآمن.</p>
-
-      <div class="grid">
-        <div class="card folder-card">
-          <h3 id="folders-title">المجلدات</h3>
-          <p id="folders-desc">احفظ المحتوى في مجلدات ذكية</p>
-          <button onclick="switchTab('folders')" id="view-folders-btn">عرض المجلدات</button>
-        </div>
-        <div class="card content-card">
-          <h3 id="saved-title">المحفوظات</h3>
-          <p id="saved-desc">جميع المحتوى المحفوظ في مكان واحد</p>
-          <button onclick="switchTab('search')" id="view-all-btn">عرض الكل</button>
-        </div>
-      </div>
     </section>
 
     <!-- شاشة إضافة محتوى -->
@@ -272,6 +259,24 @@
         <h3 id="privacy-title">سياسة الخصوصية</h3>
         <button onclick="showPrivacyPolicy()" id="privacy-btn">عرض سياسة الخصوصية</button>
       </div>
+      <div class="card">
+        <h3>نماذج الأعمال</h3>
+        <p>توفر SmartMark نسختين: مجانية ومدفوعة.</p>
+        <h4>النسخة المجانية:</h4>
+        <ul>
+          <li>تخزين محدود للمحتوى</li>
+          <li>إمكانية إضافة مجلدات</li>
+          <li>بحث في المحتوى المحفوظ</li>
+        </ul>
+        <h4>النسخة مدفوعة:</h4>
+        <ul>
+          <li>تخزين غير محدود للمحتوى</li>
+          <li>إمكانية إضافة مجلدات غير محدودة</li>
+          <li>بحث متقدم في المحتوى المحفوظ</li>
+          <li>مزامنة البيانات عبر الأجهزة</li>
+          <li>دعم فني مخصص</li>
+        </ul>
+      </div>
     </section>
   </main>
 
@@ -294,17 +299,7 @@
         },
         home: {
           title: "مرحبا بك في SmartMark",
-          desc: "احفظ ونظّم كل ما يهمك من الإنترنت في مكان واحد ذكي وآمن.",
-          folders: {
-            title: "المجلدات",
-            desc: "احفظ المحتوى في مجلدات ذكية",
-            btn: "عرض المجلدات"
-          },
-          saved: {
-            title: "المحفوظات",
-            desc: "جميع المحتوى المحفوظ في مكان واحد",
-            btn: "عرض الكل"
-          }
+          desc: "احفظ ونظّم كل ما يهمك من الإنترنت في مكان واحد ذكي وآمن."
         },
         add: {
           title: "إضافة محتوى جديد",
@@ -399,17 +394,7 @@
         },
         home: {
           title: "Welcome to SmartMark",
-          desc: "Save and organize everything you care about from the internet in one smart and secure place.",
-          folders: {
-            title: "Folders",
-            desc: "Save content in smart folders",
-            btn: "View Folders"
-          },
-          saved: {
-            title: "Saved Items",
-            desc: "All your saved content in one place",
-            btn: "View All"
-          }
+          desc: "Save and organize everything you care about from the internet in one smart and secure place."
         },
         add: {
           title: "Add New Content",
@@ -516,12 +501,6 @@
       // تحديث شاشة الرئيسية
       document.getElementById('home-title').textContent = t.home.title;
       document.getElementById('home-desc').textContent = t.home.desc;
-      document.getElementById('folders-title').textContent = t.home.folders.title;
-      document.getElementById('folders-desc').textContent = t.home.folders.desc;
-      document.getElementById('view-folders-btn').textContent = t.home.folders.btn;
-      document.getElementById('saved-title').textContent = t.home.saved.title;
-      document.getElementById('saved-desc').textContent = t.home.saved.desc;
-      document.getElementById('view-all-btn').textContent = t.home.saved.btn;
 
       // تحديث شاشة إضافة محتوى
       document.getElementById('add-title').textContent = t.add.title;
@@ -637,7 +616,7 @@
           <h3>${folder.name}</h3>
           <p>${new Date(folder.createdAt).toLocaleDateString()}</p>
           <p>${contents.filter(c => c.folderId === folder.id).length} ${translations[currentLang].folders.items}</p>
-          <button onclick="viewFolder('${folder.id}')">${translations[currentLang].folders.view_content}</button>
+          <button onclick="viewFolderContents('${folder.id}')">${translations[currentLang].folders.view_content}</button>
         `;
         container.appendChild(card);
       });
@@ -674,6 +653,40 @@
       }
     }
 
+    function viewFolderContents(folderId) {
+      switchTab('folders'); // انتقل إلى صفحة المجلدات
+      document.getElementById('folders-list').innerHTML = '';
+      const folder = folders.find(f => f.id === folderId);
+      if (folder) {
+        const folderCard = document.createElement('div');
+        folderCard.className = 'card folder-card';
+        folderCard.innerHTML = `
+          <h3>${folder.name}</h3>
+          <p>${new Date(folder.createdAt).toLocaleDateString()}</p>
+          <button onclick="showFolderModal()" id="add-folder-btn">إضافة مجلد جديد</button>
+          <button onclick="switchTab('home')">عودة للرئيسية</button>
+        `;
+        document.getElementById('folders-list').appendChild(folderCard);
+
+        const contentsContainer = document.createElement('div');
+        contentsContainer.className = 'grid';
+        const folderContents = contents.filter(c => c.folderId === folderId);
+        folderContents.forEach(content => {
+          const card = document.createElement('div');
+          card.className = 'card content-card';
+          card.innerHTML = `
+            <h3>${content.title}</h3>
+            <p><strong>${translations[currentLang].search.type}:</strong> ${content.type}</p>
+            <p><strong>${translations[currentLang].search.tags}:</strong> ${content.tags.join(', ')}</p>
+            <a href="${content.url}" target="_blank">${translations[currentLang].search.view_content}</a>
+          `;
+          contentsContainer.appendChild(card);
+        });
+
+        document.getElementById('folders-list').appendChild(contentsContainer);
+      }
+    }
+
     // --- وظائف المحتوى ---
     function addContent() {
       const type = document.getElementById('content-type').value;
@@ -697,12 +710,6 @@
 
       alert(translations[currentLang].notifications.content_saved);
       document.getElementById('add-form').reset();
-    }
-
-    function viewFolder(folderId) {
-      switchTab('search'); // انتقل إلى صفحة البحث
-      document.getElementById('search-input').value = folderId; // ضع معرف المجلد كنص بحث
-      searchContents(); // قم بالبحث
     }
 
     function searchContents() {
@@ -732,6 +739,8 @@
     // --- وظائف الإعدادات ---
     function login() {
       alert(translations[currentLang].notifications.login_system_development);
+      // يمكنك إضافة رابطًا مؤقتًا لنظام تسجيل الدخول
+      // window.location.href = '/login'; // مثال على رابط مؤقت
     }
 
     function exportData() {
