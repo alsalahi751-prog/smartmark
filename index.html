@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>SmartMark</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+header {
+  background: #222;
+  color: #fff;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.lang-switch {
+  background: #4CAF50;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+nav {
+  display: flex;
+  background: #333;
+}
+nav button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: #333;
+  color: #fff;
+  cursor: pointer;
+}
+nav button.active {
+  background: #4CAF50;
+}
+main {
+  padding: 15px;
+}
+.card {
+  background: #fff;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+.actions button {
+  margin: 5px 5px 5px 0;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: #fff;
+  margin-bottom: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <strong>SmartMark</strong>
+  <div class="lang-switch" onclick="toggleLang()">AR / EN</div>
+</header>
+
+<nav>
+  <button class="nav-btn active" onclick="showSection('home', this)">Home</button>
+  <button class="nav-btn" onclick="showSection('folders', this)">Folders</button>
+  <button class="nav-btn" onclick="showSection('content', this)">Content</button>
+</nav>
+
+<main>
+
+<!-- HOME -->
+<section id="home">
+  <div class="card actions">
+    <button onclick="showSection('folders', document.querySelectorAll('.nav-btn')[1])" id="btnFolders">Folders</button>
+    <button onclick="searchContent()" id="btnSearch">Search</button>
+    <button onclick="addContent()" id="btnAddContent">Add Content</button>
+  </div>
+</section>
+
+<!-- FOLDERS -->
+<section id="folders" style="display:none">
+  <div class="card">
+    <button onclick="addFolder()" id="btnAddFolder">Add Folder</button>
+    <ul id="folderList">
+      <li>General</li>
+    </ul>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section id="content" style="display:none">
+
+  <div class="card actions">
+    <button onclick="deleteSelected()" id="btnDelete">Delete</button>
+    <button onclick="moveSelected()" id="btnMove">Move</button>
+  </div>
+
+  <div class="item">
+    <input type="checkbox" class="select">
+    <span>Saved Article</span>
+  </div>
+
+  <div class="item">
+    <input type="checkbox" class="select">
+    <span>Saved Video</span>
+  </div>
+
+</section>
+
+</main>
+
+<script>
+let lang = "en";
+
+const texts = {
+  en: {
+    Home: "Home",
+    Folders: "Folders",
+    Content: "Content",
+    btnFolders: "Folders",
+    btnSearch: "Search",
+    btnAddContent: "Add Content",
+    btnAddFolder: "Add Folder",
+    btnDelete: "Delete",
+    btnMove: "Move"
+  },
+  ar: {
+    Home: "الرئيسية",
+    Folders: "المجلدات",
+    Content: "المحتوى",
+    btnFolders: "المجلدات",
+    btnSearch: "بحث",
+    btnAddContent: "إضافة محتوى",
+    btnAddFolder: "إضافة مجلد",
+    btnDelete: "حذف",
+    btnMove: "نقل"
+  }
+};
+
+function toggleLang() {
+  lang = lang === "en" ? "ar" : "en";
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+  document.querySelectorAll(".nav-btn")[0].innerText = texts[lang].Home;
+  document.querySelectorAll(".nav-btn")[1].innerText = texts[lang].Folders;
+  document.querySelectorAll(".nav-btn")[2].innerText = texts[lang].Content;
+
+  for (let key in texts[lang]) {
+    let el = document.getElementById(key);
+    if (el) el.innerText = texts[lang][key];
+  }
+}
+
+function showSection(id, btn) {
+  document.querySelectorAll("main section").forEach(s => s.style.display = "none");
+  document.getElementById(id).style.display = "block";
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+function addFolder() {
+  let name = prompt(lang === "ar" ? "اسم المجلد" : "Folder name");
+  if (!name) return;
+  let li = document.createElement("li");
+  li.innerText = name;
+  document.getElementById("folderList").appendChild(li);
+}
+
+function addContent() {
+  alert(lang === "ar" ? "إضافة محتوى (تجريبي)" : "Add content (demo)");
+}
+
+function searchContent() {
+  alert(lang === "ar" ? "بحث (تجريبي)" : "Search (demo)");
+}
+
+function deleteSelected() {
+  document.querySelectorAll(".select:checked").forEach(c => c.parentElement.remove());
+}
+
+function moveSelected() {
+  alert(lang === "ar" ? "تم نقل المحتوى (تجريبي)" : "Content moved (demo)");
+}
+</script>
+
+</body>
+</html>
