@@ -6,231 +6,185 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body{
-  margin:0;
-  font-family:Tahoma, Arial;
-  background:#f4f6f5;
-}
+body{margin:0;font-family:Tahoma;background:#f4f6f5}
 header{
-  background:#1e7f5c;
-  color:#fff;
-  padding:10px 15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  background:#1e7f5c;color:#fff;padding:10px;
+  display:flex;justify-content:space-between;align-items:center
 }
-header img{
-  height:32px;
-}
+.logo svg{height:32px}
 .lang-btn{
-  background:#0fb17a;
-  border:none;
-  color:#fff;
-  padding:4px 8px;
-  border-radius:4px;
-  font-size:12px;
+  position:absolute;top:8px;left:8px;
+  background:#0fb17a;color:#fff;border:none;
+  padding:4px 6px;border-radius:4px;font-size:11px
 }
-nav{
-  display:flex;
-  background:#fff;
-  border-bottom:1px solid #ddd;
-}
-nav button{
-  flex:1;
-  padding:10px;
-  border:none;
-  background:#fff;
-  cursor:pointer;
-}
-nav button.active{
-  background:#0fb17a;
-  color:#fff;
-}
-main{
-  padding:15px;
-  min-height:calc(100vh - 140px);
-}
-section{display:none;}
-section.active{display:block;}
-
-input,textarea,select,button{
-  width:100%;
-  margin-top:8px;
-  padding:8px;
-}
-
-ul{list-style:none;padding:0;}
-li{
-  background:#fff;
-  margin-top:6px;
-  padding:8px;
-  border-radius:4px;
-}
-
-.actions button{
-  width:auto;
-  margin-left:5px;
-}
-
-footer{
-  background:#eee;
-  padding:10px;
-  text-align:center;
-  font-size:12px;
-}
-.footer-link{
-  color:#1e7f5c;
-  cursor:pointer;
-  text-decoration:underline;
-}
+nav{display:flex;background:#fff;border-bottom:1px solid #ccc}
+nav button{flex:1;padding:10px;border:none;background:#fff}
+nav button.active{background:#0fb17a;color:#fff}
+main{padding:15px;min-height:calc(100vh - 150px)}
+section{display:none}
+section.active{display:block}
+input,textarea,select,button{width:100%;margin-top:8px;padding:8px}
+ul{list-style:none;padding:0}
+li{background:#fff;margin-top:6px;padding:8px;border-radius:4px}
+.actions button{width:auto;margin-left:5px}
+footer{text-align:center;background:#eee;padding:10px;font-size:12px}
 </style>
 </head>
 
 <body>
 
 <header>
-  <img src="https://dummyimage.com/120x40/ffffff/000000&text=SmartMark" alt="SmartMark Logo">
+  <div class="logo">
+    <svg viewBox="0 0 120 40">
+      <rect width="120" height="40" rx="6" fill="#ffffff"/>
+      <text x="60" y="26" text-anchor="middle" fill="#1e7f5c" font-size="18" font-weight="bold">SmartMark</text>
+    </svg>
+  </div>
   <button class="lang-btn">AR</button>
 </header>
 
 <nav>
-  <button class="active" onclick="switchTab('home',this)">الرئيسية</button>
-  <button onclick="switchTab('folders',this)">المجلدات</button>
-  <button onclick="switchTab('add',this)">إضافة محتوى</button>
-  <button onclick="switchTab('settings',this)">الإعدادات</button>
+  <button class="active" onclick="tab('home',this)">الرئيسية</button>
+  <button onclick="tab('folders',this)">المجلدات</button>
+  <button onclick="tab('add',this)">إضافة محتوى</button>
+  <button onclick="tab('settings',this)">الإعدادات</button>
 </nav>
 
 <main>
 
 <section id="home" class="active">
-  <input placeholder="بحث داخل المحتوى..." oninput="search(this.value)">
+  <input placeholder="بحث..." oninput="search(this.value)">
   <ul id="contentList"></ul>
 </section>
 
 <section id="folders">
-  <input id="newFolder" placeholder="اسم المجلد الجديد">
-  <button onclick="createFolder()">إضافة مجلد</button>
+  <button onclick="toggleFolderInput()">➕ إضافة مجلد جديد</button>
+  <div id="folderInput" style="display:none">
+    <input id="newFolderName" placeholder="اسم المجلد">
+    <button onclick="addFolder()">حفظ المجلد</button>
+  </div>
   <ul id="folderList"></ul>
 </section>
 
 <section id="add">
-  <textarea id="contentInput" placeholder="أدخل محتوى أو رابط"></textarea>
+  <textarea id="contentText" placeholder="نص أو رابط"></textarea>
   <select id="folderSelect"></select>
-  <button onclick="saveContent()">حفظ</button>
+  <button onclick="addContent()">حفظ المحتوى</button>
 </section>
 
 <section id="settings">
-  <button onclick="downloadBackup()">نسخة احتياطية</button>
-  <button onclick="showPrivacy()">سياسة الخصوصية</button>
-  <button disabled>تسجيل الدخول (غير مفعل)</button>
-  <button disabled>النسخة السحابية (تتطلب خادم)</button>
+  <button onclick="backup()">نسخة احتياطية</button>
+  <button onclick="setPaid()">النسخة المدفوعة</button>
+  <button onclick="privacy()">سياسة الخصوصية</button>
 </section>
 
 </main>
 
 <footer>
-  <span class="footer-link" onclick="showPrivacy()">سياسة الخصوصية</span>
+  © SmartMark
 </footer>
 
 <script>
 let folders = JSON.parse(localStorage.getItem("folders")) || [{name:"عام",public:true}];
 let contents = JSON.parse(localStorage.getItem("contents")) || [];
 
-function persist(){
-  localStorage.setItem("folders",JSON.stringify(folders));
-  localStorage.setItem("contents",JSON.stringify(contents));
-}
+function save(){localStorage.setItem("folders",JSON.stringify(folders));localStorage.setItem("contents",JSON.stringify(contents));}
 
-function switchTab(id,btn){
+function tab(id,b){
   document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  render();
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");render();
+}
+
+function toggleFolderInput(){
+  folderInput.style.display = folderInput.style.display==="none"?"block":"none";
+}
+
+function addFolder(){
+  const n=newFolderName.value.trim(); if(!n) return;
+  folders.push({name:n,public:false}); newFolderName.value="";
+  folderInput.style.display="none"; save(); render();
 }
 
 function render(){
-  renderFolders();
-  renderContents();
-  renderSelect();
-}
-
-function createFolder(){
-  const name=newFolder.value.trim();
-  if(!name) return;
-  folders.push({name,public:false});
-  newFolder.value="";
-  persist();render();
-}
-
-function renderFolders(){
-  folderList.innerHTML="";
-  folders.forEach(f=>{
+  folderList.innerHTML=""; folderSelect.innerHTML=""; contentList.innerHTML="";
+  folders.forEach((f,i)=>{
     const li=document.createElement("li");
-    li.textContent=f.name+(f.public?" (عام)":"");
-    li.onclick=()=>filterByFolder(f.name);
-    folderList.appendChild(li);
-  });
-}
-
-function saveContent(){
-  const text=contentInput.value.trim();
-  if(!text) return;
-  contents.push({text,folder:folderSelect.value});
-  contentInput.value="";
-  persist();render();
-}
-
-function renderSelect(){
-  folderSelect.innerHTML="";
-  folders.forEach(f=>{
-    const o=document.createElement("option");
-    o.value=f.name;
-    o.textContent=f.name;
-    folderSelect.appendChild(o);
-  });
-}
-
-function renderContents(filter=""){
-  contentList.innerHTML="";
-  contents
-  .filter(c=>c.text.includes(filter))
-  .forEach((c,i)=>{
-    const li=document.createElement("li");
-    li.innerHTML=`${c.text}
+    li.innerHTML=`${f.name}${f.public?" (عام)":""}
     <div class="actions">
-      <button onclick="remove(${i})">حذف</button>
+      <button onclick="makePublic(${i})">تعيين عام</button>
+      <button onclick="deleteFolder(${i})">حذف</button>
     </div>`;
-    contentList.appendChild(li);
+    folderList.appendChild(li);
+    const o=document.createElement("option");o.text=f.name;folderSelect.appendChild(o);
   });
+  contents.forEach((c,i)=>drawContent(c,i));
 }
 
-function remove(i){
-  contents.splice(i,1);
-  persist();render();
+function addContent(){
+  const t=contentText.value.trim(); if(!t) return;
+  contents.push({text:t,folder:folderSelect.value}); contentText.value="";
+  save(); render();
 }
 
-function search(q){ renderContents(q); }
+function drawContent(c,i){
+  const li=document.createElement("li");
+  li.innerHTML=`${c.text}
+  <div class="actions">
+    <button onclick="view(${i})">عرض</button>
+    <button onclick="move(${i})">نقل</button>
+    <button onclick="del(${i})">حذف</button>
+  </div>`;
+  contentList.appendChild(li);
+}
 
-function filterByFolder(name){
+function view(i){
+  const t=contents[i].text;
+  if(t.startsWith("http")) window.open(t,"_blank");
+  else alert(t);
+}
+
+function del(i){
+  if(confirm("هل أنت متأكد من الحذف؟")){
+    contents.splice(i,1); save(); render();
+  }
+}
+
+function move(i){
+  const f=prompt("اسم المجلد:");
+  if(folders.find(x=>x.name===f)){contents[i].folder=f;save();render();}
+}
+
+function deleteFolder(i){
+  if(contents.find(c=>c.folder===folders[i].name)){
+    alert("لا يمكن حذف مجلد يحتوي محتوى");return;
+  }
+  folders.splice(i,1); save(); render();
+}
+
+function makePublic(i){
+  folders.forEach(f=>f.public=false);
+  folders[i].public=true; save(); render();
+}
+
+function search(q){
   contentList.innerHTML="";
-  contents.filter(c=>c.folder===name).forEach(c=>{
-    const li=document.createElement("li");
-    li.textContent=c.text;
-    contentList.appendChild(li);
-  });
+  contents.filter(c=>c.text.includes(q)).forEach((c,i)=>drawContent(c,i));
 }
 
-function downloadBackup(){
-  const blob=new Blob([JSON.stringify({folders,contents},null,2)],{type:"application/json"});
+function backup(){
+  const b=new Blob([JSON.stringify({folders,contents},null,2)],{type:"application/json"});
   const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="smartmark-backup.json";
-  a.click();
+  a.href=URL.createObjectURL(b); a.download="backup.json"; a.click();
 }
 
-function showPrivacy(){
-  alert("نحن لا نجمع بيانات شخصية ولا نشارك المحتوى مع أي طرف ثالث.");
+function setPaid(){
+  alert("النسخة المجانية: 50 عنصر\nالمدفوعة: غير محدودة + مزامنة");
+}
+
+function privacy(){
+  alert("لا يتم جمع أو مشاركة أي بيانات.");
 }
 
 render();
