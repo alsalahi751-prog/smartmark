@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>SmartMark</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  margin:0;
+  font-family:Tahoma, Arial;
+  background:#f4f6f5;
+}
+header{
+  background:#1e7f5c;
+  color:#fff;
+  padding:10px 15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+header img{
+  height:32px;
+}
+.lang-btn{
+  background:#0fb17a;
+  border:none;
+  color:#fff;
+  padding:4px 8px;
+  border-radius:4px;
+  font-size:12px;
+}
+nav{
+  display:flex;
+  background:#fff;
+  border-bottom:1px solid #ddd;
+}
+nav button{
+  flex:1;
+  padding:10px;
+  border:none;
+  background:#fff;
+  cursor:pointer;
+}
+nav button.active{
+  background:#0fb17a;
+  color:#fff;
+}
+main{
+  padding:15px;
+  min-height:calc(100vh - 140px);
+}
+section{display:none;}
+section.active{display:block;}
+
+input,textarea,select,button{
+  width:100%;
+  margin-top:8px;
+  padding:8px;
+}
+
+ul{list-style:none;padding:0;}
+li{
+  background:#fff;
+  margin-top:6px;
+  padding:8px;
+  border-radius:4px;
+}
+
+.actions button{
+  width:auto;
+  margin-left:5px;
+}
+
+footer{
+  background:#eee;
+  padding:10px;
+  text-align:center;
+  font-size:12px;
+}
+.footer-link{
+  color:#1e7f5c;
+  cursor:pointer;
+  text-decoration:underline;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="https://dummyimage.com/120x40/ffffff/000000&text=SmartMark" alt="SmartMark Logo">
+  <button class="lang-btn">AR</button>
+</header>
+
+<nav>
+  <button class="active" onclick="switchTab('home',this)">الرئيسية</button>
+  <button onclick="switchTab('folders',this)">المجلدات</button>
+  <button onclick="switchTab('add',this)">إضافة محتوى</button>
+  <button onclick="switchTab('settings',this)">الإعدادات</button>
+</nav>
+
+<main>
+
+<section id="home" class="active">
+  <input placeholder="بحث داخل المحتوى..." oninput="search(this.value)">
+  <ul id="contentList"></ul>
+</section>
+
+<section id="folders">
+  <input id="newFolder" placeholder="اسم المجلد الجديد">
+  <button onclick="createFolder()">إضافة مجلد</button>
+  <ul id="folderList"></ul>
+</section>
+
+<section id="add">
+  <textarea id="contentInput" placeholder="أدخل محتوى أو رابط"></textarea>
+  <select id="folderSelect"></select>
+  <button onclick="saveContent()">حفظ</button>
+</section>
+
+<section id="settings">
+  <button onclick="downloadBackup()">نسخة احتياطية</button>
+  <button onclick="showPrivacy()">سياسة الخصوصية</button>
+  <button disabled>تسجيل الدخول (غير مفعل)</button>
+  <button disabled>النسخة السحابية (تتطلب خادم)</button>
+</section>
+
+</main>
+
+<footer>
+  <span class="footer-link" onclick="showPrivacy()">سياسة الخصوصية</span>
+</footer>
+
+<script>
+let folders = JSON.parse(localStorage.getItem("folders")) || [{name:"عام",public:true}];
+let contents = JSON.parse(localStorage.getItem("contents")) || [];
+
+function persist(){
+  localStorage.setItem("folders",JSON.stringify(folders));
+  localStorage.setItem("contents",JSON.stringify(contents));
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  render();
+}
+
+function render(){
+  renderFolders();
+  renderContents();
+  renderSelect();
+}
+
+function createFolder(){
+  const name=newFolder.value.trim();
+  if(!name) return;
+  folders.push({name,public:false});
+  newFolder.value="";
+  persist();render();
+}
+
+function renderFolders(){
+  folderList.innerHTML="";
+  folders.forEach(f=>{
+    const li=document.createElement("li");
+    li.textContent=f.name+(f.public?" (عام)":"");
+    li.onclick=()=>filterByFolder(f.name);
+    folderList.appendChild(li);
+  });
+}
+
+function saveContent(){
+  const text=contentInput.value.trim();
+  if(!text) return;
+  contents.push({text,folder:folderSelect.value});
+  contentInput.value="";
+  persist();render();
+}
+
+function renderSelect(){
+  folderSelect.innerHTML="";
+  folders.forEach(f=>{
+    const o=document.createElement("option");
+    o.value=f.name;
+    o.textContent=f.name;
+    folderSelect.appendChild(o);
+  });
+}
+
+function renderContents(filter=""){
+  contentList.innerHTML="";
+  contents
+  .filter(c=>c.text.includes(filter))
+  .forEach((c,i)=>{
+    const li=document.createElement("li");
+    li.innerHTML=`${c.text}
+    <div class="actions">
+      <button onclick="remove(${i})">حذف</button>
+    </div>`;
+    contentList.appendChild(li);
+  });
+}
+
+function remove(i){
+  contents.splice(i,1);
+  persist();render();
+}
+
+function search(q){ renderContents(q); }
+
+function filterByFolder(name){
+  contentList.innerHTML="";
+  contents.filter(c=>c.folder===name).forEach(c=>{
+    const li=document.createElement("li");
+    li.textContent=c.text;
+    contentList.appendChild(li);
+  });
+}
+
+function downloadBackup(){
+  const blob=new Blob([JSON.stringify({folders,contents},null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="smartmark-backup.json";
+  a.click();
+}
+
+function showPrivacy(){
+  alert("نحن لا نجمع بيانات شخصية ولا نشارك المحتوى مع أي طرف ثالث.");
+}
+
+render();
+</script>
+
+</body>
+</html>
