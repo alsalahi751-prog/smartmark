@@ -8,10 +8,10 @@
 <style>
 body{margin:0;font-family:Tahoma;background:#f4f6f5}
 header{
-  background:#1e7f5c;color:#fff;padding:10px;
-  display:flex;justify-content:space-between;align-items:center
+  background:#1e7f5c;color:#fff;padding:10px 12px;
+  position:relative;display:flex;justify-content:center;align-items:center
 }
-.logo svg{height:32px}
+.logo svg{height:34px}
 .lang-btn{
   position:absolute;top:8px;left:8px;
   background:#0fb17a;color:#fff;border:none;
@@ -25,9 +25,11 @@ section{display:none}
 section.active{display:block}
 input,textarea,select,button{width:100%;margin-top:8px;padding:8px}
 ul{list-style:none;padding:0}
-li{background:#fff;margin-top:6px;padding:8px;border-radius:4px}
+li{background:#fff;margin-top:8px;padding:8px;border-radius:4px}
+.actions{margin-top:6px}
 .actions button{width:auto;margin-left:5px}
 footer{text-align:center;background:#eee;padding:10px;font-size:12px}
+.badge{font-size:11px;color:#0fb17a}
 </style>
 </head>
 
@@ -35,25 +37,28 @@ footer{text-align:center;background:#eee;padding:10px;font-size:12px}
 
 <header>
   <div class="logo">
-    <svg viewBox="0 0 120 40">
-      <rect width="120" height="40" rx="6" fill="#ffffff"/>
-      <text x="60" y="26" text-anchor="middle" fill="#1e7f5c" font-size="18" font-weight="bold">SmartMark</text>
+    <svg viewBox="0 0 140 40">
+      <rect width="140" height="40" rx="6" fill="#ffffff"/>
+      <text x="70" y="26" text-anchor="middle"
+            fill="#1e7f5c" font-size="18" font-weight="bold">
+        SmartMark
+      </text>
     </svg>
   </div>
   <button class="lang-btn">AR</button>
 </header>
 
 <nav>
-  <button class="active" onclick="tab('home',this)">الرئيسية</button>
-  <button onclick="tab('folders',this)">المجلدات</button>
-  <button onclick="tab('add',this)">إضافة محتوى</button>
-  <button onclick="tab('settings',this)">الإعدادات</button>
+  <button class="active" onclick="switchTab('home',this)">الرئيسية</button>
+  <button onclick="switchTab('folders',this)">المجلدات</button>
+  <button onclick="switchTab('add',this)">إضافة محتوى</button>
+  <button onclick="switchTab('settings',this)">الإعدادات</button>
 </nav>
 
 <main>
 
 <section id="home" class="active">
-  <input placeholder="بحث..." oninput="search(this.value)">
+  <input placeholder="بحث في المحتوى..." oninput="search(this.value)">
   <ul id="contentList"></ul>
 </section>
 
@@ -67,34 +72,36 @@ footer{text-align:center;background:#eee;padding:10px;font-size:12px}
 </section>
 
 <section id="add">
-  <textarea id="contentText" placeholder="نص أو رابط"></textarea>
+  <textarea id="contentText" placeholder="أدخل نصًا أو رابطًا"></textarea>
   <select id="folderSelect"></select>
   <button onclick="addContent()">حفظ المحتوى</button>
 </section>
 
 <section id="settings">
-  <button onclick="backup()">نسخة احتياطية</button>
   <button onclick="setPaid()">النسخة المدفوعة</button>
+  <button onclick="backup()">نسخة احتياطية</button>
   <button onclick="privacy()">سياسة الخصوصية</button>
 </section>
 
 </main>
 
-<footer>
-  © SmartMark
-</footer>
+<footer>© SmartMark</footer>
 
 <script>
 let folders = JSON.parse(localStorage.getItem("folders")) || [{name:"عام",public:true}];
 let contents = JSON.parse(localStorage.getItem("contents")) || [];
 
-function save(){localStorage.setItem("folders",JSON.stringify(folders));localStorage.setItem("contents",JSON.stringify(contents));}
+function save(){
+  localStorage.setItem("folders",JSON.stringify(folders));
+  localStorage.setItem("contents",JSON.stringify(contents));
+}
 
-function tab(id,b){
+function switchTab(id,btn){
   document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");render();
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  render();
 }
 
 function toggleFolderInput(){
@@ -102,65 +109,84 @@ function toggleFolderInput(){
 }
 
 function addFolder(){
-  const n=newFolderName.value.trim(); if(!n) return;
-  folders.push({name:n,public:false}); newFolderName.value="";
-  folderInput.style.display="none"; save(); render();
-}
-
-function render(){
-  folderList.innerHTML=""; folderSelect.innerHTML=""; contentList.innerHTML="";
-  folders.forEach((f,i)=>{
-    const li=document.createElement("li");
-    li.innerHTML=`${f.name}${f.public?" (عام)":""}
-    <div class="actions">
-      <button onclick="makePublic(${i})">تعيين عام</button>
-      <button onclick="deleteFolder(${i})">حذف</button>
-    </div>`;
-    folderList.appendChild(li);
-    const o=document.createElement("option");o.text=f.name;folderSelect.appendChild(o);
-  });
-  contents.forEach((c,i)=>drawContent(c,i));
+  const n=newFolderName.value.trim();
+  if(!n) return;
+  folders.push({name:n,public:false});
+  newFolderName.value="";
+  folderInput.style.display="none";
+  save(); render();
 }
 
 function addContent(){
-  const t=contentText.value.trim(); if(!t) return;
-  contents.push({text:t,folder:folderSelect.value}); contentText.value="";
+  const t=contentText.value.trim();
+  if(!t) return;
+  contents.push({text:t,folder:folderSelect.value});
+  contentText.value="";
   save(); render();
+}
+
+function render(){
+  folderList.innerHTML="";
+  folderSelect.innerHTML="";
+  contentList.innerHTML="";
+
+  folders.forEach((f,i)=>{
+    const li=document.createElement("li");
+    li.innerHTML=`
+      <strong>${f.name}</strong>
+      ${f.public?'<span class="badge">(عام)</span>':""}
+      <div class="actions">
+        <button onclick="makePublic(${i})">تعيين عام</button>
+        <button onclick="deleteFolder(${i})">حذف</button>
+      </div>`;
+    folderList.appendChild(li);
+
+    const o=document.createElement("option");
+    o.value=f.name;o.textContent=f.name;
+    folderSelect.appendChild(o);
+  });
+
+  contents.forEach((c,i)=>drawContent(c,i));
 }
 
 function drawContent(c,i){
   const li=document.createElement("li");
-  li.innerHTML=`${c.text}
-  <div class="actions">
-    <button onclick="view(${i})">عرض</button>
-    <button onclick="move(${i})">نقل</button>
-    <button onclick="del(${i})">حذف</button>
-  </div>`;
+  li.innerHTML=`
+    ${c.text}
+    <div class="actions">
+      <button onclick="viewContent(${i})">عرض</button>
+      <button onclick="moveContent(${i})">نقل</button>
+      <button onclick="deleteContent(${i})">حذف</button>
+    </div>`;
   contentList.appendChild(li);
 }
 
-function view(i){
+function viewContent(i){
   const t=contents[i].text;
   if(t.startsWith("http")) window.open(t,"_blank");
   else alert(t);
 }
 
-function del(i){
-  if(confirm("هل أنت متأكد من الحذف؟")){
+function deleteContent(i){
+  if(confirm("هل أنت متأكد من حذف هذا المحتوى؟")){
     contents.splice(i,1); save(); render();
   }
 }
 
-function move(i){
-  const f=prompt("اسم المجلد:");
-  if(folders.find(x=>x.name===f)){contents[i].folder=f;save();render();}
+function moveContent(i){
+  const f=prompt("أدخل اسم المجلد:");
+  if(folders.find(x=>x.name===f)){
+    contents[i].folder=f; save(); render();
+  }
 }
 
 function deleteFolder(i){
   if(contents.find(c=>c.folder===folders[i].name)){
-    alert("لا يمكن حذف مجلد يحتوي محتوى");return;
+    alert("لا يمكن حذف مجلد يحتوي على محتوى"); return;
   }
-  folders.splice(i,1); save(); render();
+  if(confirm("حذف المجلد؟")){
+    folders.splice(i,1); save(); render();
+  }
 }
 
 function makePublic(i){
@@ -176,11 +202,11 @@ function search(q){
 function backup(){
   const b=new Blob([JSON.stringify({folders,contents},null,2)],{type:"application/json"});
   const a=document.createElement("a");
-  a.href=URL.createObjectURL(b); a.download="backup.json"; a.click();
+  a.href=URL.createObjectURL(b); a.download="smartmark-backup.json"; a.click();
 }
 
 function setPaid(){
-  alert("النسخة المجانية: 50 عنصر\nالمدفوعة: غير محدودة + مزامنة");
+  alert("المجانية: 50 عنصر\nالمدفوعة: غير محدودة + مزامنة");
 }
 
 function privacy(){
