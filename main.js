@@ -1,42 +1,95 @@
-// ====== التخزين ======
-let items = JSON.parse(localStorage.getItem("items")) || [];
-let folders = JSON.parse(localStorage.getItem("folders")) || [];
+/*********************************
+ * 1️⃣ Data Layer
+ *********************************/
+let items = [];
+let folders = [];
 
-// ====== حفظ البيانات ======
+
+/*********************************
+ * 2️⃣ Storage Layer
+ *********************************/
 function saveData() {
-  localStorage.setItem("items", JSON.stringify(items));
-  localStorage.setItem("folders", JSON.stringify(folders));
+  localStorage.setItem("smartmark_items", JSON.stringify(items));
+  localStorage.setItem("smartmark_folders", JSON.stringify(folders));
 }
 
-// ====== إضافة محتوى ======
-function addItem() {
-  const title = document.getElementById("titleInput").value.trim();
-  const link = document.getElementById("linkInput").value.trim();
+function loadData() {
+  const savedItems = localStorage.getItem("smartmark_items");
+  const savedFolders = localStorage.getItem("smartmark_folders");
 
-  if (!title || !link) {
-    alert("يرجى إدخال العنوان والرابط");
+  items = savedItems ? JSON.parse(savedItems) : [];
+  folders = savedFolders ? JSON.parse(savedFolders) : [];
+}
+
+
+/*********************************
+ * 3️⃣ Logic Layer
+ *********************************/
+function addItem() {
+  const titleInput = document.getElementById("titleInput");
+  const linkInput = document.getElementById("linkInput");
+
+  if (!titleInput || !linkInput) return;
+
+  const title = titleInput.value.trim();
+  const link = linkInput.value.trim();
+
+  if (!title) {
+    alert("يرجى إدخال عنوان المحتوى");
     return;
   }
 
   items.push({
+    id: Date.now(),
     title,
-    link,
-    folder: null
+    link
   });
+
+  titleInput.value = "";
+  linkInput.value = "";
 
   saveData();
   renderItems();
-
-  document.getElementById("titleInput").value = "";
-  document.getElementById("linkInput").value = "";
 }
 
-// ====== عرض المحتوى المحفوظ ======
-function renderContents() {
+function deleteItem(id) {
+  if (!confirm("هل أنت متأكد من حذف هذا المحتوى؟")) return;
+
+  items = items.filter(item => item.id !== id);
+  saveData();
   renderItems();
 }
 
-// ====== رسم المحتويات ======
+function addFolder() {
+  const input = document.getElementById("folderInput");
+  if (!input) return;
+
+  const name = input.value.trim();
+  if (!name) return;
+
+  folders.push({
+    id: Date.now(),
+    name
+  });
+
+  input.value = "";
+  input.style.display = "none";
+
+  saveData();
+  renderFolders();
+}
+
+function toggleFolderInput() {
+  const input = document.getElementById("folderInput");
+  if (!input) return;
+
+  input.style.display = input.style.display === "none" ? "block" : "none";
+}
+
+
+/*********************************
+ * 4️⃣ Render Layer
+ *********************************/
 function renderItems() {
   const list = document.getElementById("itemList");
   if (!list) return;
@@ -44,48 +97,38 @@ function renderItems() {
   list.innerHTML = "";
 
   if (items.length === 0) {
-    list.innerHTML = "<li>لا يوجد محتوى محفوظ</li>";
+    const li = document.createElement("li");
+    li.textContent = "لا يوجد محتوى محفوظ";
+    li.style.opacity = "0.6";
+    list.appendChild(li);
     return;
   }
 
-  items.forEach((item, index) => {
+  items.forEach(item => {
     const li = document.createElement("li");
 
-    li.innerHTML = `
-      <strong>${item.title}</strong><br>
-      <a href="${item.link}" target="_blank">${item.link}</a><br>
-      <button onclick="deleteItem(${index})">🗑 حذف</button>
-    `;
+    const title = document.createElement("span");
+    title.textContent = item.title;
+
+    const actions = document.createElement("span");
+
+    if (item.link) {
+      const openBtn = document.createElement("button");
+      openBtn.textContent = "فتح";
+      openBtn.onclick = () => window.open(item.link, "_blank");
+      actions.appendChild(openBtn);
+    }
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "حذف";
+    deleteBtn.onclick = () => deleteItem(item.id);
+    actions.appendChild(deleteBtn);
+
+    li.appendChild(title);
+    li.appendChild(actions);
 
     list.appendChild(li);
   });
-}
-
-// ====== حذف محتوى ======
-function deleteItem(index) {
-  if (!confirm("هل أنت متأكد من حذف هذا المحتوى؟")) return;
-
-  items.splice(index, 1);
-  saveData();
-  renderItems();
-}
-
-// ====== المجلدات ======
-function toggleFolderInput() {
-  const input = document.getElementById("folderInput");
-  input.style.display = input.style.display === "none" ? "block" : "none";
-}
-
-function addFolder() {
-  const name = document.getElementById("folderInput").value.trim();
-  if (!name) return;
-
-  folders.push(name);
-  saveData();
-  renderFolders();
-
-  document.getElementById("folderInput").value = "";
-  document.getElementById("folderInput").style.display = "none";
 }
 
 function renderFolders() {
@@ -94,15 +137,24 @@ function renderFolders() {
 
   list.innerHTML = "";
 
-  folders.forEach((folder, index) => {
+  folders.forEach(folder => {
     const li = document.createElement("li");
-    li.textContent = folder;
+    li.textContent = folder.name;
     list.appendChild(li);
   });
 }
 
-// ====== تحميل أولي ======
-document.addEventListener("DOMContentLoaded", () => {
+// زر "عرض المحتوى المحفوظ"
+function renderContents() {
   renderItems();
+}
+
+
+/*********************************
+ * 5️⃣ Init
+ *********************************/
+document.addEventListener("DOMContentLoaded", () => {
+  loadData();
   renderFolders();
+  renderItems();
 });
