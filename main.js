@@ -39,7 +39,8 @@ function addContent() {
 }
 
 // عرض المحتوى
-function renderContent() {
+function renderContents() {
+
   const container = document.getElementById("contentList");
   if (!container) return;
 
