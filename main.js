@@ -1,49 +1,41 @@
-// ====== إعداد المتغيرات ======
-let contents = JSON.parse(localStorage.getItem("contents") || "[]");
-let folders = JSON.parse(localStorage.getItem("folders") || "[]");
-const FREE_LIMIT = 50; // حد النسخة المجانية
+// ======== عناصر الإدخال ========
+const titleInput = document.getElementById("titleInput");
+const linkInput = document.getElementById("linkInput");
+const folderNameInput = document.getElementById("folderInput");
+const folderList = document.getElementById("folderList");
+const contentList = document.getElementById("contentList");
 
-// ====== إضافة محتوى ======
-function addContent() {
-  const titleInput = document.getElementById("contentTitle");
-  const urlInput = document.getElementById("contentURL");
+// ======== تخزين البيانات ========
+let contents = [];
+let folders = [];
 
-  if (!titleInput.value || !urlInput.value) {
-    alert("يرجى ملء العنوان والرابط");
+// ======== إضافة محتوى ========
+function addItem() {
+  const title = titleInput.value.trim();
+  const link = linkInput.value.trim();
+
+  if (!title || !link) {
+    alert("يرجى إدخال عنوان ورابط المحتوى");
     return;
   }
 
-  // تحقق من النسخة المدفوعة
-  if (contents.length >= FREE_LIMIT) {
-    alert("لقد وصلت لحد النسخة المجانية، يرجى الترقية للنسخة المدفوعة.");
-    return;
-  }
-
-  contents.push({ title: titleInput.value, url: urlInput.value });
+  contents.push({ title, link });
   saveData();
   alert("تم حفظ المحتوى بنجاح");
-
-  titleInput.value = "";
-  urlInput.value = "";
-
   renderContents();
+
+  // تفريغ الحقول
+  titleInput.value = "";
+  linkInput.value = "";
 }
 
-// ====== حفظ البيانات في التخزين المحلي ======
-function saveData() {
-  localStorage.setItem("contents", JSON.stringify(contents));
-  localStorage.setItem("folders", JSON.stringify(folders));
-}
-
-// ====== عرض المحتوى ======
+// ======== عرض المحتوى ========
 function renderContents() {
-  const container = document.getElementById("contentList");
-  if (!container) return;
-
-  container.innerHTML = ""; // مسح أي محتوى سابق
+  if (!contentList) return;
+  contentList.innerHTML = "";
 
   if (contents.length === 0) {
-    container.innerHTML = "<p>لا يوجد محتوى محفوظ.</p>";
+    contentList.innerHTML = "<p>لا يوجد محتوى محفوظ</p>";
     return;
   }
 
@@ -51,59 +43,62 @@ function renderContents() {
     const div = document.createElement("div");
     div.className = "content-item";
     div.innerHTML = `
-      <strong>${item.title}</strong><br>
-      <a href="${item.url}" target="_blank">${item.url}</a>
-      <button onclick="deleteContent(${index})" style="margin-left:10px;">حذف</button>
+      <strong>${item.title}</strong> - <a href="${item.link}" target="_blank">${item.link}</a>
+      <button onclick="deleteItem(${index})">حذف</button>
     `;
-    container.appendChild(div);
+    contentList.appendChild(div);
   });
 }
 
-// ====== حذف محتوى ======
-function deleteContent(index) {
+// ======== حذف محتوى ========
+function deleteItem(index) {
   if (!confirm("هل أنت متأكد من حذف هذا المحتوى؟")) return;
   contents.splice(index, 1);
   saveData();
   renderContents();
 }
 
-// ====== إضافة مجلد جديد ======
-function addFolder() {
-  const folderNameInput = document.getElementById("newFolderName");
-  const folderName = folderNameInput.value.trim();
-  if (!folderName) {
-    alert("يرجى إدخال اسم المجلد");
-    return;
+// ======== إضافة مجلد جديد ========
+function toggleFolderInput() {
+  if (folderNameInput.style.display === "none") {
+    folderNameInput.style.display = "inline-block";
+    folderNameInput.focus();
+  } else {
+    folderNameInput.style.display = "none";
   }
-  folders.push(folderName);
-  saveData();
-  folderNameInput.value = "";
-  renderFolders();
 }
 
-// ====== عرض المجلدات ======
-function renderFolders() {
-  const container = document.getElementById("folderList");
-  if (!container) return;
+function addFolder() {
+  const name = folderNameInput.value.trim();
+  if (!name) return alert("يرجى إدخال اسم المجلد");
+  folders.push(name);
+  saveData();
+  renderFolders();
+  folderNameInput.value = "";
+  folderNameInput.style.display = "none";
+}
 
-  container.innerHTML = "";
+// ======== عرض المجلدات ========
+function renderFolders() {
+  if (!folderList) return;
+  folderList.innerHTML = "";
+
   if (folders.length === 0) {
-    container.innerHTML = "<p>لا توجد مجلدات بعد.</p>";
+    folderList.innerHTML = "<p>لا توجد مجلدات</p>";
     return;
   }
 
-  folders.forEach((name, index) => {
-    const div = document.createElement("div");
-    div.className = "folder-item";
-    div.innerHTML = `
-      ${name} 
-      <button onclick="deleteFolder(${index})" style="margin-left:10px;">حذف</button>
+  folders.forEach((folder, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${folder} 
+      <button onclick="deleteFolder(${index})">حذف</button>
     `;
-    container.appendChild(div);
+    folderList.appendChild(li);
   });
 }
 
-// ====== حذف مجلد ======
+// ======== حذف مجلد ========
 function deleteFolder(index) {
   if (!confirm("هل أنت متأكد من حذف هذا المجلد؟")) return;
   folders.splice(index, 1);
@@ -111,8 +106,23 @@ function deleteFolder(index) {
   renderFolders();
 }
 
-// ====== عند التحميل ======
-window.onload = function() {
+// ======== حفظ البيانات في LocalStorage ========
+function saveData() {
+  localStorage.setItem("smartmarkContents", JSON.stringify(contents));
+  localStorage.setItem("smartmarkFolders", JSON.stringify(folders));
+}
+
+// ======== استرجاع البيانات عند التحميل ========
+function loadData() {
+  const savedContents = JSON.parse(localStorage.getItem("smartmarkContents") || "[]");
+  const savedFolders = JSON.parse(localStorage.getItem("smartmarkFolders") || "[]");
+
+  contents = savedContents;
+  folders = savedFolders;
+
   renderContents();
   renderFolders();
-};
+}
+
+// ======== عند تحميل الصفحة ========
+window.onload = loadData;
