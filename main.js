@@ -1,75 +1,118 @@
-// ===== SmartMark Core Storage =====
+// ====== إعداد المتغيرات ======
+let contents = JSON.parse(localStorage.getItem("contents") || "[]");
+let folders = JSON.parse(localStorage.getItem("folders") || "[]");
+const FREE_LIMIT = 50; // حد النسخة المجانية
 
-// هيكل البيانات الأساسي
-let data = {
-  folders: {
-    "الرئيسية": []
-  },
-  activeFolder: "الرئيسية"
-};
-
-// تحميل البيانات من التخزين المحلي
-function loadData() {
-  const saved = localStorage.getItem("smartmark-data");
-  if (saved) {
-    data = JSON.parse(saved);
-  }
-}
-
-// حفظ البيانات
-function saveData() {
-  localStorage.setItem("smartmark-data", JSON.stringify(data));
-}
-
-// إضافة محتوى جديد
+// ====== إضافة محتوى ======
 function addContent() {
-  const title = prompt("أدخل عنوان المحتوى");
-  const url = prompt("أدخل الرابط");
+  const titleInput = document.getElementById("contentTitle");
+  const urlInput = document.getElementById("contentURL");
 
-  if (!title || !url) return;
+  if (!titleInput.value || !urlInput.value) {
+    alert("يرجى ملء العنوان والرابط");
+    return;
+  }
 
-  data.folders[data.activeFolder].push({
-    title,
-    url
-  });
+  // تحقق من النسخة المدفوعة
+  if (contents.length >= FREE_LIMIT) {
+    alert("لقد وصلت لحد النسخة المجانية، يرجى الترقية للنسخة المدفوعة.");
+    return;
+  }
 
+  contents.push({ title: titleInput.value, url: urlInput.value });
   saveData();
   alert("تم حفظ المحتوى بنجاح");
-  renderContent();
+
+  titleInput.value = "";
+  urlInput.value = "";
+
+  renderContents();
 }
 
-// عرض المحتوى
-function renderContents() {
+// ====== حفظ البيانات في التخزين المحلي ======
+function saveData() {
+  localStorage.setItem("contents", JSON.stringify(contents));
+  localStorage.setItem("folders", JSON.stringify(folders));
+}
 
+// ====== عرض المحتوى ======
+function renderContents() {
   const container = document.getElementById("contentList");
   if (!container) return;
 
-  container.innerHTML = "";
+  container.innerHTML = ""; // مسح أي محتوى سابق
 
-  data.folders[data.activeFolder].forEach((item, index) => {
+  if (contents.length === 0) {
+    container.innerHTML = "<p>لا يوجد محتوى محفوظ.</p>";
+    return;
+  }
+
+  contents.forEach((item, index) => {
     const div = document.createElement("div");
     div.className = "content-item";
-
     div.innerHTML = `
       <strong>${item.title}</strong><br>
-      <a href="${item.url}" target="_blank">فتح الرابط</a><br>
-      <button onclick="deleteContent(${index})">حذف</button>
+      <a href="${item.url}" target="_blank">${item.url}</a>
+      <button onclick="deleteContent(${index})" style="margin-left:10px;">حذف</button>
     `;
-
     container.appendChild(div);
   });
 }
 
-// حذف محتوى مع تأكيد
+// ====== حذف محتوى ======
 function deleteContent(index) {
-  const ok = confirm("هل أنت متأكد من حذف هذا المحتوى؟");
-  if (!ok) return;
-
-  data.folders[data.activeFolder].splice(index, 1);
+  if (!confirm("هل أنت متأكد من حذف هذا المحتوى؟")) return;
+  contents.splice(index, 1);
   saveData();
-  renderContent();
+  renderContents();
 }
 
-// تشغيل أولي
-loadData();
-document.addEventListener("DOMContentLoaded", renderContent);
+// ====== إضافة مجلد جديد ======
+function addFolder() {
+  const folderNameInput = document.getElementById("newFolderName");
+  const folderName = folderNameInput.value.trim();
+  if (!folderName) {
+    alert("يرجى إدخال اسم المجلد");
+    return;
+  }
+  folders.push(folderName);
+  saveData();
+  folderNameInput.value = "";
+  renderFolders();
+}
+
+// ====== عرض المجلدات ======
+function renderFolders() {
+  const container = document.getElementById("folderList");
+  if (!container) return;
+
+  container.innerHTML = "";
+  if (folders.length === 0) {
+    container.innerHTML = "<p>لا توجد مجلدات بعد.</p>";
+    return;
+  }
+
+  folders.forEach((name, index) => {
+    const div = document.createElement("div");
+    div.className = "folder-item";
+    div.innerHTML = `
+      ${name} 
+      <button onclick="deleteFolder(${index})" style="margin-left:10px;">حذف</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ====== حذف مجلد ======
+function deleteFolder(index) {
+  if (!confirm("هل أنت متأكد من حذف هذا المجلد؟")) return;
+  folders.splice(index, 1);
+  saveData();
+  renderFolders();
+}
+
+// ====== عند التحميل ======
+window.onload = function() {
+  renderContents();
+  renderFolders();
+};
