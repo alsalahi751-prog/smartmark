@@ -96,13 +96,54 @@ function renderItems() {
 
   list.innerHTML = "";
 
-  if (items.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = "لا يوجد محتوى محفوظ";
-    li.style.opacity = "0.6";
-    list.appendChild(li);
+  if (!items || items.length === 0) {
+    const empty = document.createElement("li");
+    empty.textContent = "📭 لا يوجد محتوى محفوظ";
+    empty.style.opacity = "0.6";
+    list.appendChild(empty);
     return;
   }
+
+  items.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.style.marginBottom = "12px";
+    li.style.padding = "10px";
+    li.style.border = "1px solid #e5e7eb";
+    li.style.borderRadius = "8px";
+
+    const title = document.createElement("div");
+    title.textContent = item.title || "بدون عنوان";
+    title.style.fontWeight = "bold";
+
+    const link = document.createElement("a");
+    link.href = item.link;
+    link.textContent = item.link;
+    link.target = "_blank";
+    link.style.display = "block";
+    link.style.margin = "6px 0";
+
+    const actions = document.createElement("div");
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "🗑 حذف";
+    delBtn.onclick = () => {
+      if (confirm("هل أنت متأكد من حذف هذا المحتوى؟")) {
+        items.splice(index, 1);
+        saveData();
+        renderItems();
+      }
+    };
+
+    actions.appendChild(delBtn);
+
+    li.appendChild(title);
+    li.appendChild(link);
+    li.appendChild(actions);
+
+    list.appendChild(li);
+  });
+}
+
 
   items.forEach(item => {
     const li = document.createElement("li");
