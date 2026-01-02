@@ -1,50 +1,48 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartMark</title>
   <link rel="stylesheet" href="style.css">
-
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f172a">
 </head>
 <body>
 
-  <header class="header">
-    <button class="lang-btn">AR</button>
-    <div class="logo">SmartMark</div>
-    <button class="toggle-content-btn" onclick="renderContents()">📂</button>
-  </header>
+<header>
+  <button class="lang-btn">AR</button>
+  <div class="logo">SmartMark</div>
+  <button id="showContentBtn" onclick="renderContents()">📂</button>
+</header>
 
-  <main class="main-content">
+<main>
 
-    <div class="section">
-      <h3>إضافة محتوى جديد</h3>
-      <input id="titleInput" placeholder="عنوان المحتوى" />
-      <input id="linkInput" placeholder="الرابط" />
-      <button class="primary" onclick="addItem()">حفظ المحتوى</button>
-    </div>
+  <div class="section">
+    <h3>إضافة محتوى جديد</h3>
+    <input id="titleInput" placeholder="عنوان المحتوى" />
+    <input id="linkInput" placeholder="الرابط" />
+    <button class="primary" onclick="addItem()">حفظ المحتوى</button>
+  </div>
 
-    <div class="section">
-      <h3>المجلدات</h3>
-      <button class="primary" onclick="toggleFolderInput()">إضافة مجلد جديد</button>
-      <input id="folderInput" placeholder="اسم المجلد" style="display:none" />
-      <ul id="folderList"></ul>
-    </div>
+  <div class="section">
+    <h3>المجلدات</h3>
+    <button class="primary" onclick="toggleFolderInput()">إضافة مجلد جديد</button>
+    <input id="folderInput" placeholder="اسم المجلد" style="display:none" />
+    <ul id="folderList"></ul>
+  </div>
 
-    <div class="section">
-      <h3>المحتوى المحفوظ</h3>
-      <ul id="itemList"></ul>
-    </div>
+  <div class="section">
+    <h3>المحتوى المحفوظ</h3>
+    <ul id="itemList"></ul>
+  </div>
 
-  </main>
+</main>
 
-  <footer>
-    <a href="privacy.html">سياسة الخصوصية</a>
-  </footer>
+<footer>
+  <a href="privacy.html">سياسة الخصوصية</a>
+</footer>
 
-  <script src="main.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
