@@ -7,12 +7,26 @@
 }
 
 /* ---------- جسم الصفحة ---------- */
-header {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
   max-width: 500px;
-  margin: 0 auto 20px;
+  margin-bottom: 20px;
   position: relative;
-  height: 60px;
+}
+
+.header .logo {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+  color: #0f172a;
+}
+
+.header button {
+  z-index: 10;
 }
 
 main {
