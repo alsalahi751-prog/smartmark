@@ -12,7 +12,10 @@ header {
   max-width: 500px;
   margin: 0 auto 20px;
   position: relative;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
 }
 
 main {
@@ -43,15 +46,14 @@ footer a:hover {
   font-size: 2rem;
   font-weight: bold;
   color: #0f172a;
-  margin-bottom: 20px;
   text-align: center;
 }
 
 /* ---------- زر اللغة ---------- */
 .lang-btn {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  left: 0;
+  top: 10px;
   padding: 5px 10px;
   border: 1px solid #0f172a;
   border-radius: 5px;
