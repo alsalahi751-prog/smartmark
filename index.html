@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SmartMark</title>
   <link rel="stylesheet" href="style.css">
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f172a">
 </head>
 <body>
+
 <header>
   <button class="lang-btn">AR</button>
   <div class="logo">SmartMark</div>
-  <button id="showContentBtn" onclick="renderContents()">📂 عرض المحتوى المحفوظ</button>
+  <button onclick="renderContents()">📂</button>
 </header>
 
 <main>
@@ -28,6 +28,7 @@
     <h3>المجلدات</h3>
     <button class="primary" onclick="toggleFolderInput()">إضافة مجلد جديد</button>
     <input id="folderInput" placeholder="اسم المجلد" style="display:none" />
+    <button class="primary" onclick="addFolder()">حفظ المجلد</button>
     <ul id="folderList"></ul>
   </div>
 
