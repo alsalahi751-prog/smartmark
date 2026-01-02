@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SmartMark</title>
   <link rel="stylesheet" href="style.css">
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f172a">
+  <script src="main.js" defer></script>
 </head>
 <body>
 
@@ -17,7 +19,6 @@
 </header>
 
 <main>
-
   <div class="section">
     <h3>إضافة محتوى جديد</h3>
     <input id="titleInput" placeholder="عنوان المحتوى" />
@@ -36,13 +37,11 @@
     <h3>المحتوى المحفوظ</h3>
     <ul id="itemList"></ul>
   </div>
-
 </main>
 
 <footer>
-  <a href="privacy.html">سياسة الخصوصية</a>
+  <a href="privacy.html" class="primary">سياسة الخصوصية</a>
 </footer>
 
-<script src="main.js"></script>
 </body>
 </html>
