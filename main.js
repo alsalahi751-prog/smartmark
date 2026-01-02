@@ -97,6 +97,11 @@ function addFolder() {
   input.style.display = "none";
 }
 
+// استدعاء addFolder عند الضغط على Enter داخل الحقل
+document.getElementById("folderInput").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") addFolder();
+});
+
 function renderFolders() {
   const list = document.getElementById("folderList");
   if (!list) return;
