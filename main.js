@@ -1,8 +1,6 @@
-// ---------- البيانات ----------
 let items = [];
 let folders = [];
 
-// ---------- إضافة محتوى ----------
 function addItem() {
   const title = document.getElementById("titleInput").value.trim();
   const link = document.getElementById("linkInput").value.trim();
@@ -21,7 +19,6 @@ function addItem() {
   document.getElementById("linkInput").value = "";
 }
 
-// ---------- عرض المحتوى ----------
 function renderContents() {
   const list = document.getElementById("itemList");
   if (!list) return;
@@ -32,12 +29,6 @@ function renderContents() {
     list.innerHTML = '<li class="empty-message">لا يوجد محتوى محفوظ</li>';
     return;
   }
-
-  const header = document.createElement("li");
-  header.style.fontWeight = "bold";
-  header.style.marginBottom = "10px";
-  header.textContent = "📌 المحتوى المحفوظ:";
-  list.appendChild(header);
 
   items.forEach((item, index) => {
     const li = document.createElement("li");
@@ -63,13 +54,11 @@ function renderContents() {
   });
 }
 
-// ---------- حفظ البيانات محليًا ----------
 function saveData() {
   localStorage.setItem("smartmark_items", JSON.stringify(items));
   localStorage.setItem("smartmark_folders", JSON.stringify(folders));
 }
 
-// ---------- تحميل البيانات ----------
 function loadData() {
   const savedItems = JSON.parse(localStorage.getItem("smartmark_items"));
   const savedFolders = JSON.parse(localStorage.getItem("smartmark_folders"));
@@ -79,7 +68,6 @@ function loadData() {
   renderFolders();
 }
 
-// ---------- المجلدات ----------
 function toggleFolderInput() {
   const input = document.getElementById("folderInput");
   input.style.display = input.style.display === "none" ? "block" : "none";
@@ -97,19 +85,17 @@ function addFolder() {
   input.style.display = "none";
 }
 
-// استدعاء addFolder عند الضغط على Enter داخل الحقل
-document.getElementById("folderInput").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") addFolder();
-});
-
 function renderFolders() {
   const list = document.getElementById("folderList");
   if (!list) return;
+
   list.innerHTML = "";
+
   if (folders.length === 0) {
     list.innerHTML = '<li class="empty-message">لا يوجد مجلدات</li>';
     return;
   }
+
   folders.forEach((name, index) => {
     const li = document.createElement("li");
     li.textContent = name;
@@ -129,5 +115,4 @@ function renderFolders() {
   });
 }
 
-// ---------- تهيئة ----------
 window.onload = loadData;
