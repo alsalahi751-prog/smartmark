@@ -124,6 +124,11 @@ function toggleContentSection() {
     section.style.display = "none";
   }
 }
+// إخفاء محتوى القسم عند تحميل الصفحة
+window.addEventListener("load", () => {
+  const contentSection = document.getElementById("contentSection");
+  if (contentSection) contentSection.style.display = "none";
+});
 window.onload = loadData;
 // ---------- إظهار / إخفاء المحتوى ----------
 function toggleContentView() {
