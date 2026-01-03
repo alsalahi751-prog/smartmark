@@ -64,8 +64,7 @@ function loadData() {
   const savedFolders = JSON.parse(localStorage.getItem("smartmark_folders"));
   if (savedItems) items = savedItems;
   if (savedFolders) folders = savedFolders;
-  renderContents();
-  renderFolders();
+  renderFolders(); // نعرض المجلدات فقط عند التحميل
 }
 
 function toggleFolderInput() {
