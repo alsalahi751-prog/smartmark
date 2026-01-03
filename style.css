@@ -55,7 +55,19 @@ header {
   margin-bottom: 10px;
   color: #0f172a;
 }
+/* ---------- ضبط محاذاة النصوص والأزرار داخل الأقسام ---------- */
+.section {
+  text-align: right; /* يجعل النصوص داخل الأقسام على اليمين */
+}
 
+.section input {
+  text-align: right; /* يجعل النص داخل حقول الإدخال على اليمين */
+}
+
+.section button.primary {
+  width: 100%;       /* الزر ممتد بعرض القسم */
+  text-align: center; /* نص الزر في المنتصف */
+}
 input {
   width: 100%;
   padding: 8px 10px;
