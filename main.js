@@ -116,3 +116,14 @@ function renderFolders() {
 }
 
 window.onload = loadData;
+// ---------- إظهار / إخفاء المحتوى ----------
+function toggleContentView() {
+  const section = document.getElementById("contentSection");
+  if (!section) return;
+
+  if (section.style.display === "none") {
+    section.style.display = "block";
+  } else {
+    section.style.display = "none";
+  }
+}
