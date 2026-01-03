@@ -114,10 +114,16 @@ function renderFolders() {
     list.appendChild(li);
   });
 }
+// ---------- إخفاء/إظهار المحتوى ----------
 function toggleContentSection() {
   const section = document.getElementById("contentSection");
   if (!section) return;
-  section.style.display = section.style.display === "none" ? "block" : "none";
+  if (section.style.display === "none" || section.style.display === "") {
+    section.style.display = "block";
+    renderContents(); // نعرض المحتوى عند الضغط
+  } else {
+    section.style.display = "none";
+  }
 }
 window.onload = loadData;
 // ---------- إظهار / إخفاء المحتوى ----------
