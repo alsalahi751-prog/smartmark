@@ -92,13 +92,22 @@ function toggleFolderInput() {
 function addFolder() {
   const input = document.getElementById("folderInput");
   const name = input.value.trim();
-  if (!name) return;
+  if (!name) {
+    alert("الرجاء إدخال اسم المجلد.");
+    return;
+  }
 
-  folders.push(name); // إضافة المجلد إلى المصفوفة
-  saveData();         // حفظ البيانات في localStorage
-  renderFolders();    // تحديث قائمة المجلدات في الواجهة
+  // أضف المجلد للمصفوفة
+  folders.push(name);
 
-  input.value = "";   // إعادة تعيين الحقل
+  // حفظ البيانات محليًا
+  saveData();
+
+  // عرض المجلدات المحدثة
+  renderFolders();
+
+  // مسح الحقل بعد الإضافة
+  input.value = "";
 }
 
 function renderFolders() {
