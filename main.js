@@ -141,15 +141,11 @@ function renderFolders() {
   });
 }
 // ---------- إخفاء/إظهار المحتوى ----------
-function toggleContentSection() {
-  const section = document.getElementById("contentSection");
-  if (!section) return;
-  if (section.style.display === "none" || section.style.display === "") {
-    section.style.display = "block";
-    renderContents(); // نعرض المحتوى عند الضغط
-  } else {
-    section.style.display = "none";
-  }
+function toggleFolderInput() {
+  const controls = document.getElementById("folderControls");
+  if (!controls) return;
+  controls.style.display = controls.style.display === "none" ? "block" : "none";
+  document.getElementById("folderInput").focus();
 }
 // إخفاء محتوى القسم عند تحميل الصفحة
 window.addEventListener("load", () => {
