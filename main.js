@@ -77,8 +77,15 @@ function loadData() {
 
 function toggleFolderInput() {
   const input = document.getElementById("folderInput");
-  input.style.display = input.style.display === "none" ? "block" : "none";
+
+  input.style.display = "block";
   input.focus();
+
+  input.onkeydown = (e) => {
+    if (e.key === "Enter") {
+      addFolder();
+    }
+  };
 }
 
 function addFolder() {
