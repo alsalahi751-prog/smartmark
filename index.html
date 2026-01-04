@@ -22,11 +22,17 @@
 
   <!-- إضافة محتوى جديد -->
   <div class="section">
-    <h3>إضافة محتوى جديد</h3>
-    <input id="titleInput" placeholder="عنوان المحتوى" />
-    <input id="linkInput" placeholder="الرابط" />
-    <button class="primary" onclick="addItem()">حفظ المحتوى</button>
+  <h3>المجلدات</h3>
+
+  <button class="primary" onclick="toggleFolderInput()">إضافة مجلد جديد</button>
+
+  <div id="folderControls" style="display:none; margin-top:10px;">
+    <input id="folderInput" placeholder="اسم المجلد" />
+    <button class="primary" onclick="addFolder()">حفظ المجلد</button>
   </div>
+
+  <ul id="folderList"></ul>
+</div>
 
   <!-- المجلدات -->
   <div class="section">
