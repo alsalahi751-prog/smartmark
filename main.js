@@ -1,6 +1,5 @@
 let items = [];
 let folders = [];
-let currentFolder = "عام";
 
 function addItem() {
   const title = document.getElementById("titleInput").value.trim();
@@ -11,7 +10,7 @@ function addItem() {
     return;
   }
 
-  items.push({ title, link, folder: "عام" });
+  items.push({ title, link });
   saveData();
   alert("تم حفظ المحتوى بنجاح");
   renderContents();
@@ -31,9 +30,7 @@ function renderContents() {
     return;
   }
 
-  items
-  .filter(item => item.folder === "عام")
-  .forEach((item, index) => {
+  items.forEach((item, index) => {
     const li = document.createElement("li");
 
     const a = document.createElement("a");
@@ -65,49 +62,27 @@ function saveData() {
 function loadData() {
   const savedItems = JSON.parse(localStorage.getItem("smartmark_items"));
   const savedFolders = JSON.parse(localStorage.getItem("smartmark_folders"));
-  if (savedItems) {
-  items = savedItems.map(item => ({
-    ...item,
-    folder: item.folder || "عام"
-  }));
-}
+  if (savedItems) items = savedItems;
   if (savedFolders) folders = savedFolders;
-  renderFolders(); // نعرض المجلدات فقط عند التحميل
+  renderContents();
+  renderFolders();
 }
 
 function toggleFolderInput() {
   const input = document.getElementById("folderInput");
-
-  input.style.display = "block";
+  input.style.display = input.style.display === "none" ? "block" : "none";
   input.focus();
-
-  input.onkeydown = (e) => {
-    if (e.key === "Enter") {
-      addFolder();
-    }
-  };
 }
 
-// ---------- إضافة مجلد ----------
 function addFolder() {
   const input = document.getElementById("folderInput");
   const name = input.value.trim();
-  if (!name) {
-    alert("الرجاء إدخال اسم المجلد.");
-    return;
-  }
-
-  // أضف المجلد للمصفوفة
+  if (!name) return;
   folders.push(name);
-
-  // حفظ البيانات محليًا
   saveData();
-
-  // عرض المجلدات المحدثة
   renderFolders();
-
-  // مسح الحقل بعد الإضافة
   input.value = "";
+  input.style.display = "none";
 }
 
 function renderFolders() {
@@ -136,22 +111,10 @@ function renderFolders() {
     };
 
     li.appendChild(delBtn);
-    li.appendChild(select);
     list.appendChild(li);
   });
 }
-// ---------- إخفاء/إظهار المحتوى ----------
-function toggleFolderInput() {
-  const controls = document.getElementById("folderControls");
-  if (!controls) return;
-  controls.style.display = controls.style.display === "none" ? "block" : "none";
-  document.getElementById("folderInput").focus();
-}
-// إخفاء محتوى القسم عند تحميل الصفحة
-window.addEventListener("load", () => {
-  const contentSection = document.getElementById("contentSection");
-  if (contentSection) contentSection.style.display = "none";
-});
+
 window.onload = loadData;
 // ---------- إظهار / إخفاء المحتوى ----------
 function toggleContentView() {
