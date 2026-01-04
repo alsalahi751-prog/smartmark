@@ -88,15 +88,17 @@ function toggleFolderInput() {
   };
 }
 
+// ---------- إضافة مجلد ----------
 function addFolder() {
   const input = document.getElementById("folderInput");
   const name = input.value.trim();
   if (!name) return;
-  folders.push(name);
-  saveData();
-  renderFolders();
-  input.value = "";
-  input.style.display = "none";
+
+  folders.push(name); // إضافة المجلد إلى المصفوفة
+  saveData();         // حفظ البيانات في localStorage
+  renderFolders();    // تحديث قائمة المجلدات في الواجهة
+
+  input.value = "";   // إعادة تعيين الحقل
 }
 
 function renderFolders() {
