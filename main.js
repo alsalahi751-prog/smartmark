@@ -1,5 +1,6 @@
 let items = [];
 let folders = [];
+let currentFolder = "عام";
 
 function addItem() {
   const title = document.getElementById("titleInput").value.trim();
@@ -10,7 +11,7 @@ function addItem() {
     return;
   }
 
-  items.push({ title, link });
+  items.push({ title, link, folder: "عام" });
   saveData();
   alert("تم حفظ المحتوى بنجاح");
   renderContents();
@@ -64,8 +65,7 @@ function loadData() {
   const savedFolders = JSON.parse(localStorage.getItem("smartmark_folders"));
   if (savedItems) items = savedItems;
   if (savedFolders) folders = savedFolders;
-  renderContents();
-  renderFolders();
+  renderFolders(); // نعرض المجلدات فقط عند التحميل
 }
 
 function toggleFolderInput() {
@@ -114,11 +114,22 @@ function renderFolders() {
     list.appendChild(li);
   });
 }
+// ---------- إخفاء/إظهار المحتوى ----------
 function toggleContentSection() {
   const section = document.getElementById("contentSection");
   if (!section) return;
-  section.style.display = section.style.display === "none" ? "block" : "none";
+  if (section.style.display === "none" || section.style.display === "") {
+    section.style.display = "block";
+    renderContents(); // نعرض المحتوى عند الضغط
+  } else {
+    section.style.display = "none";
+  }
 }
+// إخفاء محتوى القسم عند تحميل الصفحة
+window.addEventListener("load", () => {
+  const contentSection = document.getElementById("contentSection");
+  if (contentSection) contentSection.style.display = "none";
+});
 window.onload = loadData;
 // ---------- إظهار / إخفاء المحتوى ----------
 function toggleContentView() {
