@@ -114,7 +114,11 @@ function renderFolders() {
     list.appendChild(li);
   });
 }
-
+function toggleContentSection() {
+  const section = document.getElementById("contentSection");
+  if (!section) return;
+  section.style.display = section.style.display === "none" ? "block" : "none";
+}
 window.onload = loadData;
 // ---------- إظهار / إخفاء المحتوى ----------
 function toggleContentView() {
