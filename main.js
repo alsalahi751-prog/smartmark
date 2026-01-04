@@ -65,7 +65,12 @@ function saveData() {
 function loadData() {
   const savedItems = JSON.parse(localStorage.getItem("smartmark_items"));
   const savedFolders = JSON.parse(localStorage.getItem("smartmark_folders"));
-  if (savedItems) items = savedItems;
+  if (savedItems) {
+  items = savedItems.map(item => ({
+    ...item,
+    folder: item.folder || "عام"
+  }));
+}
   if (savedFolders) folders = savedFolders;
   renderFolders(); // نعرض المجلدات فقط عند التحميل
 }
