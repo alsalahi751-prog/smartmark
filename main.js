@@ -10,7 +10,7 @@ function addItem() {
     return;
   }
 
-  items.push({ title, link });
+  items.push({ title, link, folder: "عام" });
   saveData();
   alert("تم حفظ المحتوى بنجاح");
   renderContents();
