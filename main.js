@@ -31,7 +31,9 @@ function renderContents() {
     return;
   }
 
-  items.forEach((item, index) => {
+  items
+  .filter(item => item.folder === "عام")
+  .forEach((item, index) => {
     const li = document.createElement("li");
 
     const a = document.createElement("a");
