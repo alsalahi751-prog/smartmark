@@ -32,8 +32,11 @@
   <div class="section">
   <h3>المجلدات</h3>
   <input id="folderInput" placeholder="اسم المجلد" />
+  <div class="folder-section">
+  <input id="folderInput" placeholder="اسم المجلد" style="display:none" />
   <button class="primary" onclick="addFolder()">حفظ المجلد</button>
 </div>
+<button class="primary" onclick="toggleFolderInput()">إضافة مجلد جديد</button>
 
   <!-- المحتوى المحفوظ -->
   <div class="section" id="contentSection">
