@@ -1,5 +1,6 @@
 let items = [];
 let folders = [];
+let currentFolder = "عام";
 
 function addItem() {
   const title = document.getElementById("titleInput").value.trim();
