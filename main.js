@@ -113,6 +113,7 @@ function renderFolders() {
     };
 
     li.appendChild(delBtn);
+    li.appendChild(select);
     list.appendChild(li);
   });
 }
