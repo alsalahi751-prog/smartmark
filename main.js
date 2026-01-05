@@ -26,10 +26,36 @@ function renderContents() {
 
   list.innerHTML = "";
 
-  if (items.length === 0) {
-    list.innerHTML = '<li class="empty-message">لا يوجد محتوى محفوظ</li>';
+  const filteredItems = currentFolder
+    ? items.filter(item => item.folder === currentFolder)
+    : items;
+
+  if (filteredItems.length === 0) {
+    list.innerHTML = '<li class="empty-message">لا يوجد محتوى في هذا المجلد</li>';
     return;
   }
+
+  filteredItems.forEach((item, index) => {
+    const li = document.createElement("li");
+
+    const title = document.createElement("span");
+    title.textContent = item.title;
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "حذف";
+    delBtn.onclick = () => {
+      if (confirm("هل أنت متأكد من حذف هذا المحتوى؟")) {
+        items.splice(items.indexOf(item), 1);
+        saveData();
+        renderContents();
+      }
+    };
+
+    li.appendChild(title);
+    li.appendChild(delBtn);
+    list.appendChild(li);
+  });
+}
 
   items.forEach((item, index) => {
     const li = document.createElement("li");
