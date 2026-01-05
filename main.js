@@ -152,4 +152,8 @@ window.addEventListener("load", () => {
 });
 
 // تحميل البيانات عند فتح الصفحة
-window.onload = loadData;
+window.addEventListener("load", () => {
+  loadData();
+  const contentSection = document.getElementById("contentSection");
+  if (contentSection) contentSection.style.display = "none";
+});
