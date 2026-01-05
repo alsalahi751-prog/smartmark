@@ -64,7 +64,8 @@ moveBtn.onclick = () => {
   alert("تم نقل المحتوى بنجاح");
 };
     li.appendChild(a);
-    li.appendChild(delBtn);
+    li.appendChild(moveBtn);
+li.appendChild(delBtn);
     list.appendChild(li);
   });
 }
