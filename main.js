@@ -22,21 +22,7 @@ function addItem() {
   document.getElementById("linkInput").value = "";
 }
 
-// ---------- عرض المحتوى ----------
-function renderContents() {
-  const list = document.getElementById("itemList");
-  if (!list) return;
 
-  list.innerHTML = "";
-
-  const filteredItems = currentFolder
-    ? items.filter(item => item.folder === currentFolder)
-    : items;
-
-  if (filteredItems.length === 0) {
-    list.innerHTML = '<li class="empty-message">لا يوجد محتوى في هذا المجلد</li>';
-    return;
-  }
 
   filteredItems.forEach((item, index) => {
     const li = document.createElement("li");
@@ -92,12 +78,7 @@ function loadData() {
   renderFolders();
 }
 
-// ---------- المجلدات ----------
-function toggleFolderInput() {
-  const input = document.getElementById("folderInput");
-  input.style.display = input.style.display === "none" ? "block" : "none";
-  input.focus();
-}
+
 
 function addFolder() {
   const input = document.getElementById("folderInput");
