@@ -48,7 +48,21 @@ function renderContents() {
         renderContents();
       }
     };
+const moveBtn = document.createElement("button");
+moveBtn.textContent = "نقل";
+moveBtn.onclick = () => {
+  const folderName = prompt("اكتب اسم المجلد:");
+  if (!folderName) return;
 
+  if (!folders.includes(folderName)) {
+    alert("المجلد غير موجود");
+    return;
+  }
+
+  items[index].folder = folderName;
+  saveData();
+  alert("تم نقل المحتوى بنجاح");
+};
     li.appendChild(a);
     li.appendChild(delBtn);
     list.appendChild(li);
