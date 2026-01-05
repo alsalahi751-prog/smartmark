@@ -128,22 +128,28 @@ function renderFolders() {
 
   folders.forEach((name, index) => {
     const li = document.createElement("li");
-    li.textContent = name;
 
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "حذف";
-    delBtn.onclick = () => {
-      if (confirm("هل تريد حذف هذا المجلد؟")) {
-        folders.splice(index, 1);
-        saveData();
-        renderFolders();
-      }
-    };
+const nameSpan = document.createElement("span");
+nameSpan.textContent = name;
+nameSpan.style.cursor = "pointer";
+nameSpan.style.fontWeight = "bold";
+nameSpan.onclick = () => {
+  currentFolder = name;
+  renderContents();
+};
 
-    li.appendChild(delBtn);
-    list.appendChild(li);
-  });
-}
+const delBtn = document.createElement("button");
+delBtn.textContent = "حذف";
+delBtn.onclick = () => {
+  if (confirm("هل تريد حذف هذا المجلد؟")) {
+    folders.splice(index, 1);
+    saveData();
+    renderFolders();
+  }
+};
+
+li.appendChild(nameSpan);
+li.appendChild(delBtn);
 // ---------- إخفاء/إظهار المحتوى ----------
 function toggleContentSection() {
   const section = document.getElementById("contentSection");
