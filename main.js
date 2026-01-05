@@ -27,9 +27,12 @@ function addItem() {
   filteredItems.forEach((item, index) => {
     const li = document.createElement("li");
 
-    const title = document.createElement("span");
-    title.textContent = item.title;
-
+    const a = document.createElement("a");
+a.href = item.link;
+a.target = "_blank"; // يفتح الرابط في نافذة جديدة
+a.textContent = item.title;
+a.style.marginRight = "10px"; // مسافة بين الرابط والأزرار
+li.appendChild(a);
     const delBtn = document.createElement("button");
     delBtn.textContent = "حذف";
     delBtn.onclick = () => {
