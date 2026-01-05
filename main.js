@@ -21,6 +21,8 @@ function addItem() {
 }
 
 function renderContents() {
+  console.log("currentFolder:", currentFolder);
+console.log("items:", items);
   const list = document.getElementById("itemList");
   if (!list) return;
 
