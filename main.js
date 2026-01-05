@@ -41,6 +41,21 @@ function renderContents() {
 
     const delBtn = document.createElement("button");
     delBtn.textContent = "حذف";
+    const moveBtn = document.createElement("button");
+moveBtn.textContent = "نقل";
+moveBtn.onclick = () => {
+  const folderName = prompt("اكتب اسم المجلد:");
+  if (!folderName) return;
+
+  if (!folders.includes(folderName)) {
+    alert("المجلد غير موجود");
+    return;
+  }
+
+  items[index].folder = folderName;
+  saveData();
+  alert("تم نقل المحتوى بنجاح");
+};
     delBtn.onclick = () => {
       if (confirm("هل أنت متأكد من حذف هذا المحتوى؟")) {
         items.splice(index, 1);
