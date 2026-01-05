@@ -1,3 +1,4 @@
+// ---------- البيانات ----------
 let items = [];
 let folders = [];
 let currentFolder = "عام";
@@ -28,7 +29,9 @@ function renderContents() {
 
   list.innerHTML = "";
 
-  const filteredItems = items.filter(item => item.folder === currentFolder);
+  const filteredItems = currentFolder
+    ? items.filter(item => item.folder === currentFolder)
+    : items;
 
   if (filteredItems.length === 0) {
     list.innerHTML = '<li class="empty-message">لا يوجد محتوى في هذا المجلد</li>';
@@ -37,15 +40,12 @@ function renderContents() {
 
   filteredItems.forEach((item, index) => {
     const li = document.createElement("li");
-    li.className = "content-item";
 
     const title = document.createElement("span");
     title.textContent = item.title;
-    title.className = "item-title";
 
     const delBtn = document.createElement("button");
     delBtn.textContent = "حذف";
-    delBtn.className = "delete-btn";
     delBtn.onclick = () => {
       if (confirm("هل أنت متأكد من حذف هذا المحتوى؟")) {
         items.splice(items.indexOf(item), 1);
@@ -56,7 +56,6 @@ function renderContents() {
 
     const moveBtn = document.createElement("button");
     moveBtn.textContent = "نقل";
-    moveBtn.className = "move-btn";
     moveBtn.onclick = () => {
       const folderName = prompt("اكتب اسم المجلد:");
       if (!folderName) return;
@@ -79,13 +78,12 @@ function renderContents() {
   });
 }
 
-// ---------- حفظ البيانات ----------
+// ---------- حفظ / تحميل البيانات ----------
 function saveData() {
   localStorage.setItem("smartmark_items", JSON.stringify(items));
   localStorage.setItem("smartmark_folders", JSON.stringify(folders));
 }
 
-// ---------- تحميل البيانات ----------
 function loadData() {
   const savedItems = JSON.parse(localStorage.getItem("smartmark_items"));
   const savedFolders = JSON.parse(localStorage.getItem("smartmark_folders"));
@@ -125,7 +123,6 @@ function renderFolders() {
 
   folders.forEach((name, index) => {
     const li = document.createElement("li");
-    li.className = "folder-item";
 
     const nameSpan = document.createElement("span");
     nameSpan.textContent = name;
@@ -138,11 +135,11 @@ function renderFolders() {
 
     const delBtn = document.createElement("button");
     delBtn.textContent = "حذف";
-    delBtn.className = "delete-btn";
     delBtn.onclick = () => {
       if (confirm("هل تريد حذف هذا المجلد؟")) {
         folders.splice(index, 1);
-        items = items.filter(item => item.folder !== name); // إزالة المحتويات أيضاً
+        // حذف كل المحتوى الذي كان في هذا المجلد
+        items = items.filter(item => item.folder !== name);
         saveData();
         renderFolders();
         renderContents();
@@ -173,4 +170,5 @@ window.addEventListener("load", () => {
   if (contentSection) contentSection.style.display = "none";
 });
 
+// تحميل البيانات عند فتح الصفحة
 window.onload = loadData;
